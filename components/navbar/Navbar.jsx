@@ -353,7 +353,8 @@ export default function Navbar() {
             {/* You can replace this span with your logo component later */}
             {/* <span className="hidden lg:inline text-xs text-light/80">يوسف قنديل للاستشارات القانونية</span> */}
             <a
-              href="#contact"
+               href="https://wa.me/00971556631971"
+               target="_blank"
               className="bg-primary text-white px-5 py-2 rounded-full text-xs md:text-sm font-semibold shadow-sm hover:bg-primary/90 transition"
             >
               احجز استشارة

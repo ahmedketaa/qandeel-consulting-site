@@ -13,7 +13,7 @@ import ContactModal from "../contact-modal/ContactModal";
 const slides = [
   {
     image: "/images/service2.avif",
-    kicker: "استشارات أعمال",
+    kicker: "استشارات قانونية",
     title: "من الفكرة إلى التنفيذ، نمشي معك خطوة بخطوة",
     subtitle:
       "سواء كنت شركة ناشئة أو مؤسسة قائمة، نساعدك تبني نموذج نمو مستدام وواضح.",
