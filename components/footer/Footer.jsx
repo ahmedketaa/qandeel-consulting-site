@@ -213,16 +213,13 @@ export default function Footer() {
 
               <p>
                 الجوال: <br />
-                <a href="tel:0508600486" className="hover:text-primary">0508600486</a> <br />
                 <a href="tel:0556631971" className="hover:text-primary">0556631971</a>
               </p>
 
               <p>
                 الإيميل: <br />
-                <a href="mailto:Rawasytc77@gmail.com" className="hover:text-primary">
-                  rawasytc77@gmail.com
-                </a>
-                <br />
+               
+                
                 <a href="mailto:Rightslegal22@gmail.com" className="hover:text-primary">
                   rightslegal22@gmail.com
                 </a>
