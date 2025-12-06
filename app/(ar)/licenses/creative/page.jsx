@@ -32,12 +32,8 @@ export default function CreativeLicensePage() {
           >
             <Link href="/" className="hover:underline">الرئيسية</Link>
             <span>/</span>
-            <Link href="/services" className="hover:underline">الخدمات</Link>
-            <span>/</span>
-            <Link href="/government-services" className="hover:underline">
-              الخدمات الحكومية
-            </Link>
-            <span>/</span>
+          
+           
             <Link href="/licenses" className="hover:underline">
               الرخص التجارية
             </Link>

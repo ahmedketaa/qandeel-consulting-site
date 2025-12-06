@@ -193,30 +193,32 @@ const navItems = [
   },
   {
     label: "الدعاية والإعلان",
-    href: "/marketing",
+    href: "/services",
     submenu: [
       {
         label: "إدارة حسابات وسائل التواصل الاجتماعي",
-        href: "#",
+        href: "/services/social-media-management",
       },
-      { label: "الدعاية والتسويق", href: "#" },
-      { label: "التصميم الجرافيكي والهوية البصرية", href: "#" },
-      { label: "إنشاء المحتوى", href: "#" },
+      { label: "الدعاية والتسويق", href: "/services/advertising-marketing" },
+      { label: "التصميم الجرافيكي والهوية البصرية", href: "/services/graphic-design-branding" },
+      // { label: "إنشاء المحتوى", href: "/services/content-creation" },
     ],
   },
   {
     label: "خدمات الرواسي للطباعة",
-    href: "/al-rawasi-services",
+    href: "/elrwasy",
     submenu: [
-      { label: "خدمات المحاكم – الإنجاز", href: "#" },
-      { label: "كاتب العدل والتوثيق", href: "#" },
-      { label: "خدمات شرطة أبوظبي", href: "#" },
-      { label: "خدمات النيابة العامة", href: "#" },
+      { label: "خدمات المحاكم – الإنجاز", href: "/elrwasy/court-services" },
+      { label: "كاتب العدل والتوثيق", href: "/elrwasy/notary-services" },
+      { label: "خدمات شرطة أبوظبي", href: "/elrwasy/abu-dhabi-police-services" },
+      { label: "خدمات النيابة العامة", href: "/elrwasy/public-prosecution-services" },
+      { label: "خدمات تخليص المعاملات الحكومية", href: "/elrwasy/government-transactions-clearance" },
+
     ],
   },
   {
     label: "الاستشارات القانونية",
-    href: "/consulting",
+    href: "/legal-consulting",
     submenu: null,
   },
 ];

@@ -29,7 +29,7 @@ export default function AbuDhabiTraderLicensePage() {
           >
             <Link href="/">الرئيسية</Link>
             <span>/</span>
-            <Link href="/government-services">الخدمات الحكومية</Link>
+            <Link href="/licenses">   الرخص التجارية</Link>
             <span>/</span>
             <span className="text-primary font-semibold">
               رخصة تاجر أبوظبي
