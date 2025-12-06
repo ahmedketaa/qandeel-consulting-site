@@ -11,7 +11,7 @@ export const metadata = {
     description:
       "استشارات قانونية متكاملة تشمل العقود، المنازعات، الشركات، قضايا العمل وغيرها. خبراء قانونيون لخدمتك.",
   },
-};
+}; 
 
 export default function LegalConsultingPage() {
   return (
