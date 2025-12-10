@@ -53,9 +53,7 @@ async function getArticleBySlug(slug) {
 
 // ==================== SEO لكل مقال ====================
 export async function generateMetadata({ params }) {
-  // ✅ نفس التكنيك اللي استخدمناه قبل كده
-  const resolvedParams = await params;
-  const slug = resolvedParams?.slug;
+  const slug = params?.slug; // ❌ شيل await
 
   const article = await getArticleBySlug(slug);
 
@@ -83,21 +81,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// ==================== توليد الباراميترات الستاتيك ====================
-export async function generateStaticParams() {
-  await connectDB();
-  const posts = await Post.find({ status: "published" }).select("slug");
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
 // ==================== صفحة المقال ====================
 export default async function ArticlePage({ params }) {
-  // ✅ برضو نفس الفكرة هنا
-  const resolvedParams = await params;
-  const slug = resolvedParams?.slug;
+  const slug = params?.slug; // ❌ شيل await
 
   const article = await getArticleBySlug(slug);
 
