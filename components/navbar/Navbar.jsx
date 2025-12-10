@@ -221,6 +221,11 @@ const navItems = [
     href: "/legal-consulting",
     submenu: null,
   },
+   {
+    label: "المقالات ",
+    href: "/articles",
+    submenu: null,
+  },
 ];
 
 export default function Navbar() {
