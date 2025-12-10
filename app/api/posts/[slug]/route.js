@@ -1,28 +1,40 @@
 // app/api/posts/[slug]/route.js
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import Article from "@/models/Article";
+import Post from "@/models/Post";
 
 export async function GET(_req, { params }) {
   try {
     await connectDB();
 
-    const { slug } = params;
+    const { slug } =await params;
+    if (!slug) {
+      return NextResponse.json(
+        { error: "لم يتم تمرير سلاج صحيح" },
+        { status: 400 }
+      );
+    }
 
-    const article = await Article.findOne({ slug, status: "published" });
+    // نجلب مقال منشور فقط
+    const post = await Post.findOne({
+      slug,
+      status: "published",
+    }).select(
+      "title slug excerpt content category tags views createdAt coverImage readTimeMinutes"
+    );
 
-    if (!article) {
+    if (!post) {
       return NextResponse.json(
         { error: "المقال غير موجود أو غير منشور" },
         { status: 404 }
       );
     }
 
-    // ممكن هنا نزود العداد views
-    article.views = (article.views || 0) + 1;
-    await article.save();
+    // زيادة عدد المشاهدات (لو عندك حقل views في الـ Schema)
+    post.views = (post.views || 0) + 1;
+    await post.save();
 
-    return NextResponse.json({ article });
+    return NextResponse.json({ post }, { status: 200 });
   } catch (err) {
     console.error("POST_PUBLIC_GET_ERROR:", err);
     return NextResponse.json(

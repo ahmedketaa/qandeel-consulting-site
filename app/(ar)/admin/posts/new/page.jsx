@@ -12,6 +12,11 @@ export default function NewPostPage() {
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [status, setStatus] = useState("draft");
+
+  const [coverImageUrl, setCoverImageUrl] = useState("");
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState("");
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -23,6 +28,50 @@ export default function NewPostPage() {
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9\u0600-\u06FF\-]/g, "");
     setSlug(s);
+  }
+
+  async function handleImageChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageError("");
+
+    if (!file.type.startsWith("image/")) {
+      setImageError("من فضلك اختر ملف صورة صالح");
+      return;
+    }
+
+    // ممكن تضيف هنا شرط حجم معين لو حابب
+    // if (file.size > 2 * 1024 * 1024) { ... }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setImageUploading(true);
+
+    try {
+      const res = await fetch("/api/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "فشل رفع الصورة");
+      }
+
+      setCoverImageUrl(data.url);
+      console.log(data,"data of image upload");
+      
+    } catch (err) {
+      console.error("Image upload error:", err);
+      setImageError(
+        err.message || "حدث خطأ أثناء رفع الصورة، حاول مرة أخرى."
+      );
+    } finally {
+      setImageUploading(false);
+    }
   }
 
   async function handleSubmit(e) {
@@ -47,10 +96,12 @@ export default function NewPostPage() {
           excerpt: excerpt.trim(),
           content: content.trim(),
           status,
+          coverImage: coverImageUrl || "undefined", // ✅ إرسال رابط الصورة
         }),
       });
 
       const data = await res.json();
+console.log(data,"data res");
 
       if (!res.ok) {
         setError(data.error || "حدث خطأ أثناء حفظ المقال");
@@ -70,7 +121,6 @@ export default function NewPostPage() {
 
   return (
     <main className="bg-white/90 rounded-2xl shadow-md border border-[#D2DCB6] p-6 space-y-6">
-
       <header className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <div className="p-2 rounded-xl bg-[#A1BC98]/20 border border-[#A1BC98]/40">
@@ -93,8 +143,13 @@ export default function NewPostPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5" dir="rtl">
+      {imageError && (
+        <div className="rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2">
+          {imageError}
+        </div>
+      )}
 
+      <form onSubmit={handleSubmit} className="space-y-5" dir="rtl">
         {/* العنوان والسلاج */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
@@ -133,6 +188,44 @@ export default function NewPostPage() {
             <p className="text-[11px] text-[#778873] mt-1">
               يُستخدم في رابط المقال لمحركات البحث (SEO).
             </p>
+          </div>
+        </div>
+
+        {/* رفع صورة الغلاف */}
+        <div className="border border-dashed border-[#D2DCB6] rounded-lg p-4 bg-[#F9FBF4]">
+          <label className="block text-sm font-medium text-[#5F6F61] mb-2">
+            صورة الغلاف للمقال
+          </label>
+
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex-1">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full text-sm text-[#5F6F61] file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#5F6F61] file:text-white hover:file:bg-[#4b5850]"
+              />
+              <p className="text-[11px] text-[#778873] mt-1">
+                يفضل استخدام صورة أفقية بجودة جيدة، مثل 1200×630 بكسل.
+              </p>
+
+              {imageUploading && (
+                <div className="flex items-center gap-2 text-xs text-[#5F6F61] mt-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>جاري رفع الصورة...</span>
+                </div>
+              )}
+            </div>
+
+            {coverImageUrl && (
+              <div className="w-full md:w-40 h-24 rounded-lg overflow-hidden border border-[#D2DCB6] bg-white">
+                <img
+                  src={coverImageUrl}
+                  alt="صورة الغلاف"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -206,11 +299,19 @@ export default function NewPostPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || imageUploading}
             className="inline-flex items-center gap-2 text-sm px-5 py-2.5 rounded-lg bg-[#5F6F61] text-white font-semibold hover:bg-[#4b5850] transition disabled:opacity-60"
           >
-            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            <span>{status === "published" ? "نشر المقال" : "حفظ كمسودة"}</span>
+            {(loading || imageUploading) && (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            )}
+            <span>
+              {loading
+                ? "جاري الحفظ..."
+                : status === "published"
+                ? "نشر المقال"
+                : "حفظ كمسودة"}
+            </span>
           </button>
         </div>
       </form>

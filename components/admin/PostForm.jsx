@@ -7,12 +7,10 @@ import { Loader2, Save, FileText } from "lucide-react";
 const initialForm = {
   title: "",
   slug: "",
-  status: "published",
-  category: "",
+  status: "draft",
   excerpt: "",
   content: "",
   coverImage: "",
-  readTime: 3,
 };
 
 function slugify(str) {
@@ -23,17 +21,20 @@ function slugify(str) {
     .replace(/[^\u0600-\u06FF\w-]+/g, "");
 }
 
-export default function PostForm({ mode = "create", initialData, onSubmit }) {
+export default function PostForm({ mode = "edit", initialData, onSubmit }) {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState("");
 
   useEffect(() => {
     if (initialData) {
       setForm((prev) => ({
         ...prev,
         ...initialData,
+        status: initialData.status || "draft",
       }));
     }
   }, [initialData]);
@@ -41,8 +42,48 @@ export default function PostForm({ mode = "create", initialData, onSubmit }) {
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
 
-    if (field === "title" && !initialData) {
+    // لو في وضع إنشاء (create) ومفيش initialData، خلّي السلاج يتولد من العنوان
+    if (field === "title" && !initialData && mode === "create") {
       setForm((prev) => ({ ...prev, title: value, slug: slugify(value) }));
+    }
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageError("");
+
+    if (!file.type.startsWith("image/")) {
+      setImageError("من فضلك اختر ملف صورة صالح");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setImageUploading(true);
+
+    try {
+      const res = await fetch("/api/upload-image", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "فشل رفع الصورة");
+      }
+
+      setForm((prev) => ({ ...prev, coverImage: data.url }));
+    } catch (err) {
+      console.error("Image upload error:", err);
+      setImageError(
+        err.message || "حدث خطأ أثناء رفع الصورة، حاول مرة أخرى."
+      );
+    } finally {
+      setImageUploading(false);
     }
   };
 
@@ -50,7 +91,6 @@ export default function PostForm({ mode = "create", initialData, onSubmit }) {
     const newErrors = {};
 
     if (!form.title.trim()) newErrors.title = "عنوان المقال مطلوب.";
-    if (!form.slug.trim()) newErrors.slug = "الرابط المختصر (Slug) مطلوب.";
     if (!form.content.trim()) newErrors.content = "محتوى المقال مطلوب.";
     if (form.excerpt && form.excerpt.length > 220)
       newErrors.excerpt = "الملخص يفضل ألا يزيد عن 220 حرفًا.";
@@ -61,22 +101,12 @@ export default function PostForm({ mode = "create", initialData, onSubmit }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMessage("");
 
     if (!validate()) return;
 
     setIsSubmitting(true);
     try {
       await onSubmit?.(form);
-      setSuccessMessage(
-        mode === "create"
-          ? "تم إنشاء المقال (تجريبيًا) بنجاح. لاحقًا هنوصل الفورم مع قاعدة البيانات."
-          : "تم حفظ تعديلات المقال (تجريبيًا)."
-      );
-
-      if (mode === "create" && !initialData) {
-        setForm(initialForm);
-      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -89,11 +119,11 @@ export default function PostForm({ mode = "create", initialData, onSubmit }) {
       onSubmit={handleSubmit}
       className="space-y-4 bg-white rounded-2xl border border-[#D2DCB6]/70 shadow-md p-4 md:p-5"
     >
-      {/* عنوان + ملخص */}
+      {/* عنوان + سلاج */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-2 space-y-1.5">
           <label className="text-sm font-medium text-[#171717]">
-            عنوان المقال
+            عنوان المقال *
           </label>
           <input
             type="text"
@@ -111,84 +141,91 @@ export default function PostForm({ mode = "create", initialData, onSubmit }) {
 
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-[#171717]">
-            الرابط المختصر (Slug)
+            رابط المقال (Slug)
           </label>
           <input
             type="text"
             dir="ltr"
-            className={`w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#A1BC98] focus:border-[#A1BC98] transition ${
-              errors.slug ? "border-red-400" : "border-[#D2DCB6]"
-            }`}
+            className="w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#A1BC98] focus:border-[#A1BC98] transition border-[#D2DCB6]"
             placeholder="example-article-slug"
             value={form.slug}
             onChange={(e) => handleChange("slug", e.target.value)}
           />
-          {errors.slug && (
-            <p className="text-xs text-red-500">{errors.slug}</p>
+          <p className="text-[11px] text-[#778873]">
+            يمكن تركه فارغًا ليتم توليده تلقائيًا من العنوان (حسب منطق الـ API).
+          </p>
+        </div>
+      </div>
+
+      {/* حالة المقال */}
+      <div className="flex flex-wrap items-center gap-4">
+        <span className="text-sm font-medium text-[#5F6F61]">
+          حالة المقال:
+        </span>
+
+        <label className="flex items-center gap-2 text-sm text-[#171717]">
+          <input
+            type="radio"
+            name="status"
+            value="draft"
+            checked={form.status === "draft"}
+            onChange={() => handleChange("status", "draft")}
+          />
+          <span>مسودة (لن يظهر للعامة)</span>
+        </label>
+
+        <label className="flex items-center gap-2 text-sm text-[#171717]">
+          <input
+            type="radio"
+            name="status"
+            value="published"
+            checked={form.status === "published"}
+            onChange={() => handleChange("status", "published")}
+          />
+          <span>منشور (ظاهر في الموقع)</span>
+        </label>
+      </div>
+
+      {/* رفع صورة الغلاف */}
+      <div className="border border-dashed border-[#D2DCB6] rounded-lg p-4 bg-[#F9FBF4] space-y-2">
+        <label className="block text-sm font-medium text-[#5F6F61] mb-1">
+          صورة الغلاف للمقال
+        </label>
+
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <div className="flex-1">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full text-sm text-[#5F6F61] file:mr-2 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#5F6F61] file:text-white hover:file:bg-[#4b5850]"
+            />
+            <p className="text-[11px] text-[#778873] mt-1">
+              يفضل استخدام صورة أفقية بجودة جيدة، مثل 1200×630 بكسل.
+            </p>
+
+            {imageUploading && (
+              <div className="flex items-center gap-2 text-xs text-[#5F6F61] mt-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>جاري رفع الصورة...</span>
+              </div>
+            )}
+
+            {imageError && (
+              <p className="text-xs text-red-500 mt-1">{imageError}</p>
+            )}
+          </div>
+
+          {form.coverImage && (
+            <div className="w-full md:w-40 h-24 rounded-lg overflow-hidden border border-[#D2DCB6] bg-white">
+              <img
+                src={form.coverImage}
+                alt="صورة الغلاف"
+                className="w-full h-full object-cover"
+              />
+            </div>
           )}
         </div>
-      </div>
-
-      {/* حالة + تصنيف + وقت القراءة */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#171717]">
-            حالة المقال
-          </label>
-          <select
-            className="w-full rounded-xl border border-[#D2DCB6] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#A1BC98] focus:border-[#A1BC98] bg-white"
-            value={form.status}
-            onChange={(e) => handleChange("status", e.target.value)}
-          >
-            <option value="published">منشور</option>
-            <option value="draft">مسودة</option>
-          </select>
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#171717]">
-            تصنيف / قسم المقال
-          </label>
-          <input
-            type="text"
-            className="w-full rounded-xl border border-[#D2DCB6] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#A1BC98] focus:border-[#A1BC98]"
-            placeholder="مثال: قضايا مدنية، رخص تجارية..."
-            value={form.category}
-            onChange={(e) => handleChange("category", e.target.value)}
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-sm font-medium text-[#171717]">
-            وقت القراءة التقريبي (دقائق)
-          </label>
-          <input
-            type="number"
-            min={1}
-            max={60}
-            className="w-full rounded-xl border border-[#D2DCB6] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#A1BC98] focus:border-[#A1BC98]"
-            value={form.readTime}
-            onChange={(e) => handleChange("readTime", Number(e.target.value))}
-          />
-        </div>
-      </div>
-
-      {/* صورة الغلاف */}
-      <div className="space-y-1.5">
-        <label className="text-sm font-medium text-[#171717]">
-          رابط صورة الغلاف (مؤقتًا)
-        </label>
-        <input
-          type="text"
-          dir="ltr"
-          className="w-full rounded-xl border border-[#D2DCB6] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#A1BC98] focus:border-[#A1BC98]"
-          placeholder="/images/blog/example.jpg أو رابط خارجي"
-          value={form.coverImage}
-          onChange={(e) => handleChange("coverImage", e.target.value)}
-        />
-        <p className="text-[11px] text-[#778873]">
-          لاحقًا ممكن نحول ده لرفع صورة فعليًا (Upload) بدل رابط.
-        </p>
       </div>
 
       {/* ملخص قصير */}
@@ -218,7 +255,7 @@ export default function PostForm({ mode = "create", initialData, onSubmit }) {
       <div className="space-y-1.5">
         <label className="text-sm font-medium text-[#171717] flex items-center gap-1">
           <FileText className="w-4 h-4 text-[#5F6F61]" />
-          محتوى المقال
+          محتوى المقال *
         </label>
         <textarea
           rows={10}
@@ -234,25 +271,16 @@ export default function PostForm({ mode = "create", initialData, onSubmit }) {
         )}
       </div>
 
-      {/* رسالة نجاح */}
-      {successMessage && (
-        <div className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
-          {successMessage}
-        </div>
-      )}
-
       {/* الأزرار */}
-      <div className="flex items-center justify-between gap-3 pt-2">
-        <p className="text-[11px] text-[#778873]">
-          بمجرد ما نوصل الفورم بـ API حقيقي، أي حفظ هنا هيتسجل فعليًا في قاعدة
-          البيانات.
-        </p>
+      <div className="flex items-center justify-end gap-3 pt-2">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || imageUploading}
           className="inline-flex items-center gap-2 rounded-xl bg-[#5F6F61] text-white text-sm font-semibold px-4 py-2.5 shadow-md hover:bg-[#4b5850] disabled:opacity-70 disabled:cursor-not-allowed transition"
         >
-          {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+          {(isSubmitting || imageUploading) && (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          )}
           <Save className="w-4 h-4" />
           <span>{mode === "create" ? "حفظ المقال" : "حفظ التعديلات"}</span>
         </button>

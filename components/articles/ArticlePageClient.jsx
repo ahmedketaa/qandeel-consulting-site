@@ -14,7 +14,6 @@ import {
   Share2,
 } from "lucide-react";
 
-
 export default function ArticlePageClient({ article, canonicalUrl }) {
   const [copied, setCopied] = useState(false);
 
@@ -27,9 +26,11 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
     readTimeMinutes,
     viewCount,
     sections = [],
+    coverImage, // ⬅️ أضفنا دي
   } = article || {};
 
-  const safeUrl = canonicalUrl || (typeof window !== "undefined" ? window.location.href : "");
+  const safeUrl =
+    canonicalUrl || (typeof window !== "undefined" ? window.location.href : "");
 
   const encodedUrl = encodeURIComponent(safeUrl);
   const encodedTitle = encodeURIComponent(title || "");
@@ -96,6 +97,21 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
         )}
       </header>
 
+      {/* صورة الغلاف لو موجودة */}
+      {coverImage && (
+        <div className="mb-6 md:mb-8">
+          <div className="relative w-full h-48 md:h-64 lg:h-72 rounded-2xl overflow-hidden border border-[#D2DCB6] bg-[#F1F3E0]">
+            <img
+              src={coverImage}
+              alt={title || "صورة غلاف المقال"}
+                      className="w-full max-h-[420px] md:max-h-[480px] object-fill rounded-xl"
+
+              loading="lazy"
+            />
+          </div>
+        </div>
+      )}
+
       {/* الميتا + الأيقونات + الكاتب */}
       <section className="mb-8 grid gap-4 md:gap-6 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         {/* معلومات المقال + الأزرار التفاعلية */}
@@ -142,7 +158,7 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
           {/* خط فاصل */}
           <div className="h-px bg-[#E2E9CF]" />
 
-          {/* مشاركة + نسخ رابط + بحث في الموضوع */}
+          {/* مشاركة + نسخ رابط */}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <span className="text-[11px] md:text-xs text-[#778873] flex items-center gap-1">
@@ -157,12 +173,13 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
                 >
                   <Facebook className="w-3.5 h-3.5" />
                 </IconCircle>
-               <IconCircle
-  label="مشاركة على واتساب"
-  onClick={() => shareOn("whatsapp")}
->
-  <MessageCircle className="w-3.5 h-3.5" />
-</IconCircle>
+
+                <IconCircle
+                  label="مشاركة على واتساب"
+                  onClick={() => shareOn("whatsapp")}
+                >
+                  <MessageCircle className="w-3.5 h-3.5" />
+                </IconCircle>
 
                 <IconCircle
                   label="مشاركة على لينكدإن"

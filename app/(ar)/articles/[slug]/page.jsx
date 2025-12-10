@@ -2,29 +2,38 @@
 
 import ArticlePageClient from "@/components/articles/ArticlePageClient";
 import { notFound } from "next/navigation";
-import { connectDB } from "@/lib/mongodb";
-import Post from "@/models/Post";
 
-// 🟢 هيلبر: جلب مقال منشور بالـ slug وتحويله للفورمات المناسب للـ UI
-async function getArticleBySlug(slug) {
-  if (!slug) return null;
+const BASE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-  await connectDB();
+// 🟢 هيلبر: جلب مقال منشور بالـ slug من API /api/posts/[slug]
+async function getArticleBySlug(slugParam) {
+  if (!slugParam) return null;
 
-  const post = await Post.findOne({ slug, status: "published" }).select(
-    "title slug excerpt category tags views createdAt content readTimeMinutes"
-  );
+  const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam;
 
+  const res = await fetch(`${BASE_URL}/api/posts/${slug}`, {
+    // عشان كل زيارة تجيب أحدث داتا
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  const data = await res.json();
+  const post = data.post;
   if (!post) return null;
 
   const content = post.content || "";
 
+  // حساب وقت القراءة التقريبي لو مش متخزن
   const approxReadTime =
     post.readTimeMinutes ||
-    Math.max(1, Math.round((content.split(/\s+/).length || 200) / 200)); // ~200 كلمة/دقيقة
+    Math.max(1, Math.round((content.split(/\s+/).length || 200) / 200));
 
   return {
-    id: post._id.toString(),
+    id: post._id,
     slug: post.slug,
     title: post.title,
     excerpt:
@@ -35,12 +44,12 @@ async function getArticleBySlug(slug) {
     category: post.category || "عام",
     tags: Array.isArray(post.tags) ? post.tags : [],
     publishedAt: post.createdAt
-      ? post.createdAt.toISOString().slice(0, 10)
+      ? new Date(post.createdAt).toISOString().slice(0, 10)
       : null,
     readTimeMinutes: approxReadTime,
     viewCount: post.views ?? 0,
     content,
-    // لو ArticlePageClient متعود على sections، نبعتهاله كسيكشن واحد
+    coverImage: post.coverImage || null,
     sections: [
       {
         id: "main",
@@ -53,7 +62,7 @@ async function getArticleBySlug(slug) {
 
 // ==================== SEO لكل مقال ====================
 export async function generateMetadata({ params }) {
-  const slug = params?.slug; // ❌ شيل await
+  const {slug} = await params;
 
   const article = await getArticleBySlug(slug);
 
@@ -83,7 +92,7 @@ export async function generateMetadata({ params }) {
 
 // ==================== صفحة المقال ====================
 export default async function ArticlePage({ params }) {
-  const slug = params?.slug; // ❌ شيل await
+  const {slug} =await params;
 
   const article = await getArticleBySlug(slug);
 
@@ -91,7 +100,7 @@ export default async function ArticlePage({ params }) {
     notFound();
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const baseUrl = BASE_URL;
   const canonicalUrl = `${baseUrl}/articles/${article.slug}`;
 
   return (

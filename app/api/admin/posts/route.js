@@ -16,7 +16,6 @@ export async function GET(req) {
   try {
     await connectDB();
 
-    // تأكد إن الأدمن مسجّل دخول
     const token = req.cookies.get("admin_token")?.value;
     if (!token) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
@@ -27,11 +26,9 @@ export async function GET(req) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
     }
 
-    // جلب المقالات مرتبة من الأحدث للأقدم
     const posts = await Post.find({})
-      .sort({ createdAt: -1 })
-      // اختياري: حدد الحقول اللي محتاجها في صفحة الإدارة
-      .select("title slug status excerpt category views createdAt");
+  .sort({ createdAt: -1 })
+  .select("title slug status excerpt category views createdAt coverImage");
 
     return NextResponse.json(
       {
@@ -54,7 +51,6 @@ export async function POST(req) {
   try {
     await connectDB();
 
-    // تأكد إن الأدمن مسجّل دخول
     const token = req.cookies.get("admin_token")?.value;
     if (!token) {
       return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
@@ -66,7 +62,16 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { title, slug, content, status, excerpt } = body;
+    console.log(body,"from backend");
+    
+    const {
+      title,
+      slug,
+      content,
+      status,
+      excerpt,
+      coverImage, // ⬅️ خدناها من البودي
+    } = body;
 
     if (!title || !content) {
       return NextResponse.json(
@@ -79,7 +84,6 @@ export async function POST(req) {
     let finalSlug = baseSlug || makeSlug(Date.now().toString());
     let counter = 1;
 
-    // تأكد إن السلاج مش مكرر
     while (await Post.findOne({ slug: finalSlug })) {
       finalSlug = `${baseSlug}-${counter++}`;
     }
@@ -91,6 +95,7 @@ export async function POST(req) {
       status: status === "published" ? "published" : "draft",
       excerpt: excerpt || "",
       views: 0,
+      coverImage: coverImage || "", // ⬅️ تخزين رابط الصورة من Cloudinary
     });
 
     return NextResponse.json(
