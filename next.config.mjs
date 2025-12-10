@@ -2,14 +2,12 @@
 const nextConfig = {
   reactCompiler: true,
 
-  // ⭐ أهم جزء — تعريف نظام اللغة لمنع Shadowing لمسارات API
-  i18n: {
-    locales: ["ar"],
-    defaultLocale: "ar",
-  },
+
 
   experimental: {
-    serverActions: true, // ضروري جداً لمسارات السيرفر الحديثة
+    // لازم تكون Object مش Boolean
+    serverActions: {},
+    // لو مش محتاج Server Actions خالص ممكن تشيل experimental كله
   },
 };
 
