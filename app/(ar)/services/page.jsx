@@ -13,20 +13,111 @@ import {
 } from "lucide-react";
 import ServiceHero from "@/components/services-hero/ServiceHero";
 import ContactButtons from "@/components/buttonComponent/ContactButtons";
+import Script from "next/script";
 
 export const metadata = {
   title: "خدمات الدعاية والإعلان | مركز قنديل للاستشارات",
   description:
     "قسم الدعاية والإعلان في مركز قنديل يوفر حلولاً متكاملة للتسويق الرقمي: إدارة حسابات التواصل الاجتماعي، الحملات الإعلانية، التصميم الجرافيكي والهوية البصرية، وإنشاء المحتوى بما يناسب نشاطك في أبوظبي.",
+
+  alternates: { canonical: "/services" },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+
+  openGraph: {
+    title: "خدمات الدعاية والإعلان | مركز قنديل للاستشارات",
+    description:
+      "حلول تسويق رقمي متكاملة: إدارة سوشيال، حملات إعلانية، محتوى، وتصميم وهوية بصرية لدعم نمو نشاطك في أبوظبي.",
+    url: "/services/advertising",
+    type: "website",
+    images: [
+      {
+        url: "/images/ads.jpg",
+        width: 1200,
+        height: 630,
+        alt: "خدمات الدعاية والإعلان في مركز قنديل",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "خدمات الدعاية والإعلان | مركز قنديل للاستشارات",
+    description:
+      "إدارة سوشيال ميديا، حملات إعلانية، تصميم وهوية بصرية، وإنشاء محتوى لرفع حضور علامتك التجارية في أبوظبي.",
+    images: ["/images/ads.jpg"],
+  },
 };
+const BASE = "https://qandeil.com";
+const canonical = `${BASE}/services/advertising`;
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "الرئيسية", item: `${BASE}/` },
+    { "@type": "ListItem", position: 2, name: "خدماتنا", item: `${BASE}/services` },
+    { "@type": "ListItem", position: 3, name: "الدعاية والإعلان", item: canonical },
+  ],
+};
+
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "خدمات الدعاية والإعلان",
+  serviceType: "حلول تسويق رقمي",
+  url: canonical,
+  areaServed: {
+    "@type": "AdministrativeArea",
+    name: "أبوظبي",
+  },
+  provider: {
+    "@type": "Organization",
+    name: "مركز قنديل للاستشارات",
+    url: BASE,
+    sameAs: [
+      "https://www.facebook.com/share/1Eis3maCUf/?mibextid=wwXIfr",
+      "https://maps.app.goo.gl/khZwvZcb8auMoJaK8",
+    ],
+  },
+  description:
+    "حلول تسويق رقمي متكاملة تشمل إدارة حسابات التواصل الاجتماعي، الحملات الإعلانية، التصميم والهوية البصرية، وإنشاء المحتوى.",
+};
+
 
 export default function AdvertisingMainPage() {
   return (
+    <>
+  <Script
+    id="jsonld-breadcrumb-advertising"
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+  />
+  <Script
+    id="jsonld-service-advertising"
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+  />
+
+  <main className="bg-[#F1F3E0] text-right">
+    {/* باقي الصفحة زي ما هي */}
+  </main>
+
+
     <main className="bg-[#F1F3E0] text-right">
       {/* ================= HERO ================= */}
       <ServiceHero
         title="خدمات الدعاية والإعلان"
-        image="/images/advertising-hero.webp" // حط صورة عامة للدعاية والإعلان
+        image="/images/ads.jpg"// حط صورة عامة للدعاية والإعلان
         category="خدماتنا"
         current="الدعاية والإعلان"
       />
@@ -85,7 +176,7 @@ export default function AdvertisingMainPage() {
         {/* صورة جانبية */}
         <div className="flex justify-center animate__animated animate__fadeInLeft animate__slow">
           <Image
-            src="/images/advertising-team.webp" // صورة فريق تسويق/حملات
+            src="/images/social-management (3).jpg" // صورة فريق تسويق/حملات
             alt="قسم الدعاية والإعلان في مركز قنديل"
             width={520}
             height={380}
@@ -271,5 +362,6 @@ export default function AdvertisingMainPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

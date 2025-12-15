@@ -125,7 +125,7 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
               <div className="text-[11px] md:text-xs">
                 <p className="font-semibold text-[#171717]">يوسف قنديل</p>
                 <Link
-                  href="/author/youssef-kandeel"
+                  href="/author/youseff-qandeel"
                   className="text-[10px] text-[#778873] hover:underline"
                 >
                   عرض صفحة الكاتب

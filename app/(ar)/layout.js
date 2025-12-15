@@ -1,16 +1,24 @@
 // app/(ar)/layout.js
-"use client"
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
-import { useEffect } from "react";
+import Script from "next/script";
 
 export default function ArabicLayout({ children }) {
-  useEffect(() => {
-  fetch("/api/analytics/track", { method: "POST" });
-}, []);
-
   return (
     <>
+      {/* Analytics track بدون ما نحول layout كله لعميل */}
+      <Script
+        id="qandeil-analytics-track"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            try {
+              fetch("/api/analytics/track", { method: "POST" });
+            } catch (e) {}
+          `,
+        }}
+      />
+
       <Navbar />
       <main className="min-h-screen">{children}</main>
       <Footer />

@@ -11,7 +11,7 @@ export const metadata = {
     title: "خدمات شرطة أبوظبي | مركز قنديل للاستشارات",
     description:
       "دعم إجرائي متكامل لإنهاء معاملات شرطة أبوظبي: مخالفات مرورية، تقارير الحوادث، شهادات الحالة الجنائية، وخدمات المركبات.",
-    url: "https://your-domain.com/services/abu-dhabi-police-services",
+    url: "https://www.qandeil.com/services/abu-dhabi-police-services",
   },
 };
 

@@ -236,7 +236,7 @@ function ArticleCard({ article }) {
 function AuthorBadge() {
   return (
     <Link
-      href="/author/youssef-kandeel"
+      href="/author/youseff-qandeel"
       className="flex items-center gap-2 flex-row-reverse"
     >
       <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white text-xs font-semibold shadow-sm">

@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-
-
+import ContactModal from "../contact-modal/ContactModal";
 
 function SocialCircle({ bg, children, size = 26 }) {
   return (
@@ -55,8 +54,6 @@ function FacebookCircle({ size = 18 }) {
   );
 }
 
-
-
 function InstagramCircle({ size = 18 }) {
   return (
     <SocialCircle bg="#E4405F" size={size + 8}>
@@ -93,20 +90,20 @@ function LinkedinCircle({ size = 18 }) {
   );
 }
 
-
-
 export default function Footer() {
-   const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // ✅ مودال التواصل
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
     setSuccessMsg("");
     setErrorMsg("");
 
-    // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
@@ -122,18 +119,15 @@ export default function Footer() {
       setEmail("");
     }, 2000);
   };
+
   return (
     <footer className="bg-dark text-light mt-16">
-
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10" dir="rtl">
-
         {/* ---------------- EMAIL SUBSCRIBE + QR ---------------- */}
         <div className="border-b border-secondary/30 pb-8 mb-10">
-
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-
             {/* النص + الفورم */}
-           <div className="flex-1">
+            <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2">ابقَ على تواصل دائم</h2>
               <p className="text-sm text-light/70 mb-4">
                 أدخل بريدك الإلكتروني ليصلك كل جديد.
@@ -164,12 +158,7 @@ export default function Footer() {
                 </button>
               </form>
 
-              {/* Error Message */}
-              {errorMsg && (
-                <p className="text-red-400 text-sm mt-2">{errorMsg}</p>
-              )}
-
-              {/* Success Message */}
+              {errorMsg && <p className="text-red-400 text-sm mt-2">{errorMsg}</p>}
               {successMsg && (
                 <p className="text-green-400 text-sm mt-2">{successMsg}</p>
               )}
@@ -188,23 +177,17 @@ export default function Footer() {
                 امسح لموقع المكتب على الخريطة
               </p>
             </div>
-
           </div>
-
         </div>
 
         {/* ---------------- MAIN GRID ---------------- */}
         <div className="grid gap-10 md:grid-cols-3">
-
           {/* CONTACT COLUMN */}
           <div>
             <h3 className="text-xl font-semibold mb-3">تواصل معنا</h3>
 
             <div className="text-sm text-light/80 space-y-2">
-
-              <p className="font-semibold text-light">
-                المستشار القانوني: يوسف قنديل
-              </p>
+              <p className="font-semibold text-light">المستشار القانوني: يوسف قنديل</p>
 
               <p>
                 أبوظبي – مصفح الشعبية – شرق 10 <br />
@@ -213,14 +196,17 @@ export default function Footer() {
 
               <p>
                 الجوال: <br />
-                <a href="tel:0556631971" className="hover:text-primary">0556631971</a>
+                <a href="tel:0556631971" className="hover:text-primary">
+                  0556631971
+                </a>
               </p>
 
               <p>
                 الإيميل: <br />
-               
-                
-                <a href="mailto:Rightslegal22@gmail.com" className="hover:text-primary">
+                <a
+                  href="mailto:Rightslegal22@gmail.com"
+                  className="hover:text-primary"
+                >
                   rightslegal22@gmail.com
                 </a>
               </p>
@@ -249,14 +235,15 @@ export default function Footer() {
               </a>
 
               <a
-              href="https://www.facebook.com/profile.php?id=61577528578385"
-              aria-label="Facebook"
-              className="hover:opacity-90"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FacebookCircle />
-            </a>
+                href="https://www.facebook.com/profile.php?id=61577528578385"
+                aria-label="Facebook"
+                className="hover:opacity-90"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FacebookCircle />
+              </a>
+
               <a
                 href="https://www.linkedin.com/company/REPLACE"
                 aria-label="LinkedIn"
@@ -273,10 +260,27 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-semibold mb-3">تعرف علينا</h3>
             <ul className="space-y-2 text-sm text-light/80">
-              <li><a href="/" className="hover:text-primary">الرئيسية</a></li>
-              <li><a href="/about" className="hover:text-primary">من نحن</a></li>
-              <li><a href="/contact" className="hover:text-primary">تواصل معنا</a></li>
-              <li><a href="/location" className="hover:text-primary">موقعنا على الخريطة</a></li>
+              <li>
+                <a href="/" className="hover:text-primary">
+                  الرئيسية
+                </a>
+              </li>
+              <li>
+                <a href="/about" className="hover:text-primary">
+                  من نحن
+                </a>
+              </li>
+
+              {/* ✅ ده بدل /contact هيفتح المودال */}
+              <li>
+                <button
+                  
+                  onClick={() => setIsContactOpen(true)}
+                  className="hover:text-primary text-light/80 cursor-pointer"
+                >
+                  تواصل معنا
+                </button>
+              </li>
             </ul>
           </div>
 
@@ -284,17 +288,36 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-semibold mb-3">خدماتنا</h3>
             <ul className="space-y-2 text-sm text-light/80">
-              <li><a href="/services/government" className="hover:text-primary">الخدمات الحكومية</a></li>
-              <li><a href="/services/licenses" className="hover:text-primary">الرخص التجارية</a></li>
-              <li><a href="/services/marketing" className="hover:text-primary">الدعاية والإعلان</a></li>
-              <li><a href="/services/suppliers" className="hover:text-primary">خدمات الموردين</a></li>
-              <li><a href="/services/consulting" className="hover:text-primary">الاستشارات</a></li>
+              <li>
+                <a href="/government-services" className="hover:text-primary">
+                  الخدمات الحكومية
+                </a>
+              </li>
+              <li>
+                <a href="/licenses" className="hover:text-primary">
+                  الرخص التجارية
+                </a>
+              </li>
+              <li>
+                <a href="/services" className="hover:text-primary">
+                  الدعاية والإعلان
+                </a>
+              </li>
+              <li>
+                <a href="/legal-consulting" className="hover:text-primary">
+                  الاستشارات القانونية
+                </a>
+              </li>
             </ul>
           </div>
-
         </div>
-
       </div>
+
+      {/* ✅ Contact Modal */}
+      <ContactModal
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+      />
 
       {/* ---------------- COPYRIGHT ---------------- */}
       <div className="bg-secondary text-dark text-center py-4 text-sm">

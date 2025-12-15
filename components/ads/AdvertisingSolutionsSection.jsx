@@ -65,7 +65,7 @@ export default function AdvertisingSolutionsSection() {
           <div className="lg:self-start">
             {/* Use Link for good SEO and fast navigation */}
             <Link
-              href="/services/advertising"
+              href="/services"
               className="inline-flex items-center justify-center border border-primary bg-primary px-8 py-3 text-base font-semibold text-white rounded-full shadow-sm transition-transform duration-200 hover:-translate-y-0.5 hover:bg-dark hover:border-dark"
             >
               اكتشف المزيد

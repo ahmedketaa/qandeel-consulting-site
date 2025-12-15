@@ -7,13 +7,45 @@ export const metadata = {
   title: "خدمات الرواسي للطباعة | مركز قنديل للاستشارات",
   description:
     "خدمات الرواسي للطباعة بالتعاون مع مركز قنديل للاستشارات في أبوظبي: طباعة وتجهيز معاملات المحاكم، كاتب العدل، شرطة أبوظبي، النيابة العامة، وتخليص المعاملات الحكومية في مكان واحد.",
+
+  alternates: { canonical: "/al-rawasi-services" },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+
   openGraph: {
     title: "خدمات الرواسي للطباعة | مركز قنديل للاستشارات",
     description:
       "من خلال خدمات الرواسي للطباعة تحصل على دعم متكامل في طباعة وتجهيز المعاملات الحكومية والقضائية في أبوظبي، مع مساعدة في تعبئة النماذج الإلكترونية وتنظيم المستندات.",
-    url: "https://your-domain.com/al-rawasi-services",
+    url: "/al-rawasi-services",
+    type: "website",
+    images: [
+      {
+        url: "/images/services1.jpg",
+        width: 1200,
+        height: 630,
+        alt: "خدمات الرواسي للطباعة",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "خدمات الرواسي للطباعة | مركز قنديل للاستشارات",
+    description:
+      "دعم متكامل في طباعة وتجهيز معاملات أبوظبي: محاكم، كاتب العدل، شرطة أبوظبي، النيابة العامة، والمعاملات الحكومية.",
+    images: ["/images/services1.jpg"],
   },
 };
+
 
 // خدمات الرواسي الرئيسية (الكروت اللي هتظهر في الصفحة)
 const rawasiServices = [

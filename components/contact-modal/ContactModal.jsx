@@ -3,31 +3,33 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 
-export default function ContactModal({ isOpen, onClose }) {
+export default function ContactModal({ isOpen, onClose, serviceName = "" }) {
   const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
+    message: "",
+    service: serviceName || "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [statusMsg, setStatusMsg] = useState(null);
   const [phoneError, setPhoneError] = useState("");
 
-  // نضمن إن الـ document.body موجود (عشان الـ SSR)
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
-  // Esc يقفل المودال
+  // ✅ لو اتفتح المودال بخدمة مختلفة، حدّث الخدمة داخل الفورم
+  useEffect(() => {
+    if (!isOpen) return;
+    setForm((prev) => ({ ...prev, service: serviceName || "" }));
+  }, [serviceName, isOpen]);
+
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        onClose();
-      }
+      if (e.key === "Escape") onClose();
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -35,21 +37,28 @@ export default function ContactModal({ isOpen, onClose }) {
   }, [isOpen, onClose]);
 
   const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    if (e.target.name === "phone") setPhoneError("");
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === "phone") setPhoneError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage(null);
+    setStatusMsg(null);
     setPhoneError("");
 
     // ✅ فاليديشن رقم إماراتي (9 أو 10 أرقام)
     const digits = String(form.phone).replace(/\D/g, "");
-
     if (digits.length !== 9 && digits.length !== 10) {
       setPhoneError("من فضلك أدخل رقم هاتف إماراتي صحيح (9 أو 10 أرقام).");
+      setLoading(false);
+      return;
+    }
+
+    // ✅ فاليديشن رسالة
+    if (!form.message.trim()) {
+      setStatusMsg("من فضلك اكتب رسالتك.");
       setLoading(false);
       return;
     }
@@ -58,17 +67,28 @@ export default function ContactModal({ isOpen, onClose }) {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          service: form.service,
+          message: form.message,
+        }),
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data?.error || "حدث خطأ ما");
 
-      setMessage("تم إرسال طلبك بنجاح، سنتواصل معك قريبًا.");
-      setForm({ name: "", email: "", phone: "" });
+      setStatusMsg("تم إرسال طلبك بنجاح، سنتواصل معك قريبًا.");
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        service: serviceName || "",
+      });
     } catch (err) {
-      setMessage(err.message || "تعذر إرسال الرسالة، حاول مرة أخرى.");
+      setStatusMsg(err.message || "تعذر إرسال الرسالة، حاول مرة أخرى.");
     } finally {
       setLoading(false);
     }
@@ -76,18 +96,16 @@ export default function ContactModal({ isOpen, onClose }) {
 
   if (!isOpen || !mounted) return null;
 
-  // محتوى المودال نفسه
   const modalContent = (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-      onClick={onClose} // كليك على الخلفية يقفل المودال
+      onClick={onClose}
     >
       <div
         className="relative w-full max-w-3xl bg-white rounded-lg shadow-xl p-6 md:p-8"
         dir="rtl"
-        onClick={(e) => e.stopPropagation()} // نمنع كليك جوه المودال من إنه يقفل
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* زر الإغلاق */}
         <button
           onClick={onClose}
           className="absolute top-3 left-3 text-gray-500 hover:text-gray-700 text-2xl"
@@ -96,8 +114,14 @@ export default function ContactModal({ isOpen, onClose }) {
           ×
         </button>
 
-        {/* الفورم */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* الخدمة (اختياري للعرض فقط) */}
+          {form.service ? (
+            <div className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+              الخدمة المختارة: <span className="font-semibold">{form.service}</span>
+            </div>
+          ) : null}
+
           {/* الاسم */}
           <div>
             <label className="block mb-1 text-sm font-semibold text-gray-700">
@@ -110,15 +134,14 @@ export default function ContactModal({ isOpen, onClose }) {
               placeholder="الاسم"
               value={form.name}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             />
           </div>
 
-          {/* البريد الإلكتروني */}
+          {/* البريد الإلكتروني (اختياري) */}
           <div>
             <label className="block mb-1 text-sm font-semibold text-gray-700">
-              البريد الإلكتروني
+              البريد الإلكتروني (اختياري)
             </label>
             <input
               type="email"
@@ -126,8 +149,7 @@ export default function ContactModal({ isOpen, onClose }) {
               placeholder="Email Address"
               value={form.email}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
             />
           </div>
 
@@ -144,9 +166,7 @@ export default function ContactModal({ isOpen, onClose }) {
               placeholder="رقم الهاتف"
               value={form.phone}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]
-                         appearance-none"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] appearance-none"
             />
 
             {phoneError && (
@@ -154,10 +174,26 @@ export default function ContactModal({ isOpen, onClose }) {
             )}
           </div>
 
-          {/* رسالة نجاح أو خطأ */}
-          {message && (
+          {/* الرسالة */}
+          <div>
+            <label className="block mb-1 text-sm font-semibold text-gray-700">
+              رسالتك <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              name="message"
+              required
+              rows={5}
+              placeholder="اكتب تفاصيل طلبك هنا..."
+              value={form.message}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            />
+          </div>
+
+          {/* رسالة نجاح/خطأ */}
+          {statusMsg && (
             <p className="text-sm text-center text-[var(--color-dark)]">
-              {message}
+              {statusMsg}
             </p>
           )}
 
@@ -166,19 +202,7 @@ export default function ContactModal({ isOpen, onClose }) {
             <button
               type="submit"
               disabled={loading}
-              className="
-                bg-[var(--color-primary)]
-                hover:bg-[var(--color-dark)]
-                transition
-                text-white
-                font-semibold
-                px-12
-                py-3
-                rounded-lg
-                shadow-md
-                shadow-[rgba(0,0,0,0.1)]
-                disabled:opacity-50
-              "
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-dark)] transition text-white font-semibold px-12 py-3 rounded-lg shadow-md shadow-[rgba(0,0,0,0.1)] disabled:opacity-50"
             >
               {loading ? "جارٍ الإرسال..." : "إرسال"}
             </button>
@@ -188,6 +212,5 @@ export default function ContactModal({ isOpen, onClose }) {
     </div>
   );
 
-  // Portal على مستوى document.body عشان مايتقصش من أي كونتينر
   return createPortal(modalContent, document.body);
 }

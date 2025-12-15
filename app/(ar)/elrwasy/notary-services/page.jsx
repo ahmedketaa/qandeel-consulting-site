@@ -11,7 +11,7 @@ export const metadata = {
     title: "كاتب العدل والتوثيق | مركز قنديل للاستشارات",
     description:
       "مساعدة متكاملة في تجهيز مستندات كاتب العدل والتوثيق في أبوظبي، من إعداد النماذج للطباعة وحتى الإرشاد للإجراءات الرسمية.",
-    url: "https://your-domain.com/services/notary-services",
+    url: "https://www.qandeil.com/services/notary-services",
   },
 };
 

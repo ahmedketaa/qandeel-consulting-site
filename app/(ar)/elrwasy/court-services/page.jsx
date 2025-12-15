@@ -11,7 +11,7 @@ export const metadata = {
     title: "خدمات المحاكم – الإنجاز | مركز قنديل للاستشارات",
     description:
       "دعم متكامل في تجهيز معاملات المحاكم في أبوظبي، من طباعة المستندات وحتى متابعة الطلبات إلكترونياً.",
-    url: "https://your-domain.com/services/court-services",
+    url: "https://www.qandeil.com/services/court-services",
   },
 };
 

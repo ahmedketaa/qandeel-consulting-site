@@ -17,19 +17,19 @@ const tabs = [
     services: [
       {
         title: "تجديد رخصة تجارية",
-        href: "/services/economic/license-renewal",
+        href: "/licenses",
       },
       {
         title: "إصدار رخصة تجارية جديدة",
-        href: "/services/economic/new-license",
+        href: "/licenses/commercial",
       },
       {
         title: "إلغاء رخصة تجارية",
-        href: "/services/economic/license-cancellation",
+        href: "/licenses/commercial",
       },
       {
         title: "تعديل بيانات الرخصة",
-        href: "/services/economic/license-update",
+        href: "/licenses/commercial",
       },
     ],
   },
@@ -40,48 +40,25 @@ const tabs = [
     services: [
       {
         title: "اصدار تأشيرة سياحية متعددة الدخول",
-        href: "/services/ica/multi-entry-tourist-visa-1",
+        href: "/government-services/identity-citizenship",
       },
       {
         title: "إصدار بطاقة منشأة",
-        href: "/services/ica/establishment-card-issue-1",
+        href: "/government-services/identity-citizenship",
       },
       {
         title: "الغاء بطاقة منشأة",
-        href: "/services/ica/establishment-card-cancel-1",
+        href: "/government-services/identity-citizenship",
       },
       {
         title: "موافقة مبدئية",
-        href: "/services/ica/pre-approval-1",
+        href: "/government-services/identity-citizenship",
       },
       {
         title: "اصدار تأشيرة سياحية متعددة الدخول",
-        href: "/services/ica/multi-entry-tourist-visa-2",
+        href: "government-services/identity-citizenship",
       },
-      {
-        title: "إصدار بطاقة منشأة",
-        href: "/services/ica/establishment-card-issue-2",
-      },
-      {
-        title: "الغاء بطاقة منشأة",
-        href: "/services/ica/establishment-card-cancel-2",
-      },
-      {
-        title: "موافقة مبدئية",
-        href: "/services/ica/pre-approval-2",
-      },
-      {
-        title: "اصدار تأشيرة سياحية متعددة الدخول",
-        href: "/services/ica/multi-entry-tourist-visa-3",
-      },
-      {
-        title: "إصدار بطاقة منشأة",
-        href: "/services/ica/establishment-card-issue-3",
-      },
-      {
-        title: "الغاء بطاقة منشأة",
-        href: "/services/ica/establishment-card-cancel-3",
-      },
+     
     ],
   },
   {
@@ -91,15 +68,15 @@ const tabs = [
     services: [
       {
         title: "فتح منشأة",
-        href: "/services/mohre/open-establishment",
+        href: "/government-services/human-resources",
       },
       {
         title: "الغاء منشأة",
-        href: "/services/mohre/cancel-establishment",
+        href: "/government-services/human-resources",
       },
       {
         title: "الزيارة الأولى",
-        href: "/services/mohre/first-visit",
+        href: "/government-services/human-resources",
       },
     ],
   },
@@ -110,19 +87,19 @@ const tabs = [
     services: [
       {
         title: "ترحيل وكالات",
-        href: "/services/notary/transfer-powers",
+        href: "/government-services/notary-services",
       },
       {
         title: "ترحيل عقد التأسيس",
-        href: "/services/notary/transfer-moa",
+        href: "/government-services/notary-services",
       },
       {
         title: "طلب توثيق إقرار سكن",
-        href: "/services/notary/residence-declaration",
+        href: "/government-services/notary-services",
       },
       {
         title: "طلب توثيق إقرار بعدم الزواج بعد الطلاق",
-        href: "/services/notary/non-marriage-after-divorce",
+        href: "/government-services/notary-services",
       },
     ],
   },

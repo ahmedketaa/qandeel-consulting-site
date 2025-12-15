@@ -11,7 +11,7 @@ export const metadata = {
     title: "خدمات تخليص المعاملات الحكومية | مركز قنديل للاستشارات",
     description:
       "دعم إجرائي متكامل لإنهاء معاملات الجهات الحكومية في أبوظبي، من طباعة وتعبئة النماذج إلى إرشادك في استخدام المنصات الإلكترونية الرسمية.",
-    url: "https://your-domain.com/services/government-transactions-clearance",
+    url: "https://www.qandeil.com/services/government-transactions-clearance",
   },
 };
 

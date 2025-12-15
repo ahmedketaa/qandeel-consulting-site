@@ -1,23 +1,27 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 const services = [
   {
-    title: "التأشيرات الأوروبية",
+    title: "خدمات الرواسي",
     image: "/images/slider1.avif",
     button: "اعرف أكثر",
+    href: "/elrwasy",
   },
   {
     title: "الرخص التجارية",
     image: "/images/service2.avif",
     button: "ابدأ الآن",
+    href: "/licenses",
   },
   {
     title: "الخدمات الحكومية",
     image: "/images/service1.webp",
     button: "تصفح الآن",
+    href: "/government-services",
   },
 ];
 
@@ -39,9 +43,9 @@ export default function ServicesSection() {
               transition={{ duration: 0.6, delay: i * 0.15 }}
               className="relative cursor-pointer group"
             >
-              {/* الكارد نفسه عشان يطلع لفوق في الهوفر */}
+              {/* الكارد الأساسي */}
               <div className="relative rounded-2xl overflow-hidden bg-white border border-primary/20 shadow-md transition-all duration-500 group-hover:-translate-y-3 group-hover:shadow-2xl">
-                {/* صورة + overlay */}
+                {/* الصورة */}
                 <div className="relative h-64 overflow-hidden">
                   <Image
                     src={service.image}
@@ -50,22 +54,25 @@ export default function ServicesSection() {
                     className="object-cover transition-transform duration-700 group-hover:scale-115"
                   />
 
-                  {/* overlay غامق في الهوفر */}
+                  {/* overlay */}
                   <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-60 transition-opacity duration-500" />
                 </div>
 
-                {/* مساحة سفلية للكرت الأبيض */}
+                {/* مساحة للكرت الأبيض */}
                 <div className="h-16" />
               </div>
 
-              {/* الكرت الأبيض اللي فوق الصورة */}
+              {/* الكرت الأبيض */}
               <div className="absolute left-1/2 -translate-x-1/2 bottom-2 w-[78%]">
                 <div className="bg-white rounded-2xl border border-primary/25 px-6 py-5 text-center shadow-lg transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-primary/60">
                   <h3 className="text-foreground text-lg font-semibold mb-3">
                     {service.title}
                   </h3>
 
-                  <button className="inline-flex items-center justify-center gap-2 text-sm rounded-xl bg-primary text-dark px-6 py-2 transition-all duration-300 hover:bg-dark hover:text-light">
+                  <Link
+                    href={service.href}
+                    className="inline-flex items-center justify-center gap-2 text-sm rounded-xl bg-primary text-dark px-6 py-2 transition-all duration-300 hover:bg-dark hover:text-light"
+                  >
                     {service.button}
                     <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-light/70">
                       <svg
@@ -82,7 +89,7 @@ export default function ServicesSection() {
                         <path d="M13 6l6 6-6 6" />
                       </svg>
                     </span>
-                  </button>
+                  </Link>
                 </div>
               </div>
             </motion.div>
@@ -92,4 +99,3 @@ export default function ServicesSection() {
     </section>
   );
 }
-

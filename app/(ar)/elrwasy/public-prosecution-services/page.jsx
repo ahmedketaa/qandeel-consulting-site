@@ -11,7 +11,7 @@ export const metadata = {
     title: "خدمات النيابة العامة | مركز قنديل للاستشارات",
     description:
       "دعم إجرائي في إعداد معاملات النيابة العامة في أبوظبي، من تنظيم المستندات إلى تعبئة الطلبات الإلكترونية، دون تقديم أي استشارات قانونية.",
-    url: "https://your-domain.com/services/public-prosecution-services",
+    url: "https://www.qandeil.com/services/public-prosecution-services",
   },
 };
 

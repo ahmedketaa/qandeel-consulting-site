@@ -1,11 +1,55 @@
+// app/licenses/page.jsx (أو مسارك الحالي)
+
+import Script from "next/script";
 import ContactButtons from "@/components/buttonComponent/ContactButtons";
 import Image from "next/image";
 import Link from "next/link";
+
+const CANONICAL_PATH = "/licenses";
+const BASE_URL = "https://qandeil.com";
+const CANONICAL_URL = `${BASE_URL}${CANONICAL_PATH}`;
 
 export const metadata = {
   title: "الرخص التجارية في أبوظبي | مركز قنديل للاستشارات",
   description:
     "جميع خدمات الرخص التجارية في أبوظبي في مكان واحد — رخصة تاجر أبوظبي، رخصة الأعمال الحرة، الرخصة التجارية، رخصة مبدعة. احصل على دعم كامل في الإجراءات والاشتراطات.",
+
+  alternates: { canonical: CANONICAL_PATH },
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+
+  openGraph: {
+    title: "الرخص التجارية في أبوظبي | مركز قنديل للاستشارات",
+    description:
+      "دليل شامل لأنواع الرخص التجارية في أبوظبي مع دعم كامل في الإجراءات والمتطلبات لكل رخصة.",
+    url: CANONICAL_PATH,
+    type: "website",
+    images: [
+      {
+        url: "/images/trade.webp",
+        width: 1200,
+        height: 630,
+        alt: "الرخص التجارية في أبوظبي",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "الرخص التجارية في أبوظبي | مركز قنديل للاستشارات",
+    description:
+      "اختر نوع الرخصة المناسبة لك في أبوظبي واحصل على دعم كامل في الإجراءات والمتطلبات.",
+    images: ["/images/trade.webp"],
+  },
 };
 
 const licenses = [
@@ -40,100 +84,159 @@ const licenses = [
 ];
 
 export default function CommercialLicensesPage() {
+  // ✅ SEO JSON-LD فقط (غير مرئي)
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "الرئيسية", item: `${BASE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "الرخص التجارية", item: CANONICAL_URL },
+    ],
+  };
+
+  const collectionPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "الرخص التجارية في أبوظبي",
+    url: CANONICAL_URL,
+    inLanguage: "ar",
+    about: [
+      { "@type": "Thing", name: "الرخص التجارية" },
+      { "@type": "Thing", name: "أبوظبي" },
+      { "@type": "Thing", name: "تأسيس الشركات" },
+    ],
+    isPartOf: {
+      "@type": "WebSite",
+      name: "مركز قنديل للاستشارات",
+      url: BASE_URL,
+    },
+  };
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListOrder: "https://schema.org/ItemListOrderUnordered",
+    numberOfItems: licenses.length,
+    itemListElement: licenses.map((item, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      name: item.title,
+      url: `${BASE_URL}/licenses/${item.slug}`,
+    })),
+  };
+
   return (
-    <main className="bg-background min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-[260px] md:h-[320px] flex items-center justify-center overflow-hidden">
-        <Image
-          src="/images/trade.webp"
-          alt="الرخص التجارية في أبوظبي"
-          fill
-          priority
-          className="object-cover"
-        />
+    <>
+      <Script
+        id="jsonld-breadcrumb-licenses"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <Script
+        id="jsonld-collectionpage-licenses"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }}
+      />
+      <Script
+        id="jsonld-itemlist-licenses"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
 
-        <div className="absolute inset-0 bg-black/50" />
+      <main className="bg-background min-h-screen">
+        {/* Hero Section */}
+        <section className="relative h-[260px] md:h-[320px] flex items-center justify-center overflow-hidden">
+          <Image
+            src="/images/trade.webp"
+            alt="الرخص التجارية في أبوظبي"
+            fill
+            priority
+            className="object-cover"
+          />
 
-        <div className="relative z-10 container mx-auto px-4 text-right text-white">
-          {/* Breadcrumb */}
-          <nav
-            aria-label="breadcrumb"
-            className="mb-3 text-sm md:text-base flex gap-1 justify-end"
-          >
-            <Link href="/" className="hover:underline">
-              الرئيسية
-            </Link>
-            <span>/</span>
-            <span className="text-primary font-semibold">الرخص التجارية</span>
-          </nav>
+          <div className="absolute inset-0 bg-black/50" />
 
-          <h1 className="text-2xl md:text-4xl font-bold mb-3">
-            الرخص التجارية في إمارة أبوظبي
-          </h1>
-
-          <p className="max-w-2xl ml-auto text-gray-100 text-sm md:text-base">
-            نوفر في مركز قنديل جميع خدمات الرخص التجارية بمختلف أنواعها، مع دعم
-            كامل وخبرة في التعامل مع الجهات الحكومية، لتبدأ مشروعك بثقة ووضوح.
-          </p>
-        </div>
-      </section>
-
-      {/* Licenses List */}
-      <section className="container mx-auto px-4 py-12 text-right">
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-dark">
-          اختر نوع الرخصة المناسبة لك
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {licenses.map((item) => (
-            <div
-              key={item.slug}
-              className="bg-white rounded-2xl shadow-sm border border-secondary/40 overflow-hidden flex flex-col"
+          <div className="relative z-10 container mx-auto px-4 text-right text-white">
+            {/* Breadcrumb */}
+            <nav
+              aria-label="breadcrumb"
+              className="mb-3 text-sm md:text-base flex gap-1 justify-end"
             >
-              {/* Image with overlay */}
-              <div className="relative w-full h-48 group overflow-hidden">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                {/* overlay */}
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors duration-300" />
-                {/* title on image */}
-                <div className="absolute inset-0 flex items-end justify-end p-4">
-                  <span className="text-white text-sm md:text-base font-semibold bg-black/40 px-3 py-1 rounded-full">
+              <Link href="/" className="hover:underline">
+                الرئيسية
+              </Link>
+              <span>/</span>
+              <span className="text-primary font-semibold">الرخص التجارية</span>
+            </nav>
+
+            <h1 className="text-2xl md:text-4xl font-bold mb-3">
+              الرخص التجارية في إمارة أبوظبي
+            </h1>
+
+            <p className="max-w-2xl ml-auto text-gray-100 text-sm md:text-base">
+              نوفر في مركز قنديل جميع خدمات الرخص التجارية بمختلف أنواعها، مع دعم
+              كامل وخبرة في التعامل مع الجهات الحكومية، لتبدأ مشروعك بثقة ووضوح.
+            </p>
+          </div>
+        </section>
+
+        {/* Licenses List */}
+        <section className="container mx-auto px-4 py-12 text-right">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-dark">
+            اختر نوع الرخصة المناسبة لك
+          </h2>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {licenses.map((item) => (
+              <div
+                key={item.slug}
+                className="bg-white rounded-2xl shadow-sm border border-secondary/40 overflow-hidden flex flex-col"
+              >
+                {/* Image with overlay */}
+                <div className="relative w-full h-48 group overflow-hidden">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  {/* overlay */}
+                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 transition-colors duration-300" />
+                  {/* title on image */}
+                  <div className="absolute inset-0 flex items-end justify-end p-4">
+                    <span className="text-white text-sm md:text-base font-semibold bg-black/40 px-3 py-1 rounded-full">
+                      {item.title}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div className="p-6 flex flex-col flex-grow">
+                  <h3 className="text-xl font-bold text-dark mb-2">
                     {item.title}
-                  </span>
+                  </h3>
+
+                  <p className="text-gray-700 mb-4 text-sm leading-relaxed">
+                    {item.description}
+                  </p>
+
+                  {/* Buttons */}
+                  <div className="mt-auto flex flex-col gap-3">
+                    <Link
+                      href={`/licenses/${item.slug}`}
+                      className="text-primary font-semibold hover:underline text-sm"
+                    >
+                      عرض تفاصيل الرخصة →
+                    </Link>
+
+                    <ContactButtons serviceName={item.title} />
+                  </div>
                 </div>
               </div>
-
-              {/* Info */}
-              <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-dark mb-2">
-                  {item.title}
-                </h3>
-
-                <p className="text-gray-700 mb-4 text-sm leading-relaxed">
-                  {item.description}
-                </p>
-
-                {/* Buttons */}
-                <div className="mt-auto flex flex-col gap-3">
-                  <Link
-                    href={`/licenses/${item.slug}`}
-                    className="text-primary font-semibold hover:underline text-sm"
-                  >
-                    عرض تفاصيل الرخصة →
-                  </Link>
-
-                  <ContactButtons serviceName={item.title} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </main>
+            ))}
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
