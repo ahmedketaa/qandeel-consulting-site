@@ -1,5 +1,6 @@
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { ShieldCheck } from "lucide-react";
+import { Toaster } from "react-hot-toast";
 
 export const metadata = {
   title: "لوحة التحكم - مركز قنديل للاستشارات",
@@ -36,8 +37,25 @@ export default function AdminLayout({ children }) {
           {/* محتوى الصفحات الداخلية (Dashboard, Posts, New Post, ...) */}
           <section className="flex-1 w-full overflow-hidden">
             {children}
+             <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 5000,
+          style: {
+            minWidth: "380px",
+            maxWidth: "420px",
+            padding: "16px 18px",
+            fontSize: "14px",
+            borderRadius: "16px",
+            background: "#ffffff",
+            color: "#171717",
+            boxShadow:
+              "0 10px 25px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.08)",
+          },
+        }}
+      />
           </section>
-        </div>
+        </div>  
 
         <p className="mt-6 text-center text-xs text-[#778873]">
           هذا القسم مخصص للإدارة فقط. إذا لم تكن مخولاً، يُرجى عدم المتابعة.

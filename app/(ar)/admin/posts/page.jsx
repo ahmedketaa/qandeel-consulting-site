@@ -1,14 +1,8 @@
 "use client";
-
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  FileText,
-  Eye,
-  Plus,
-  Search,
-  Filter,
-} from "lucide-react";
+import { FileText, Eye, Plus, Search, Filter, Trash2 } from "lucide-react";
 
 const PLACEHOLDER = "—";
 
@@ -19,46 +13,107 @@ export default function AdminPostsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
- useEffect(() => {
-  async function loadPosts() {
-    try {
-      setLoading(true);
-      setError("");
-
-      const res = await fetch("/api/admin/posts", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      console.log("API Response status:", res.status);
-
-      const text = await res.text();
-      console.log("Raw API Response:", text);
-
-      if (!res.ok) {
-        throw new Error(`الـ API رجّع status ${res.status}`);
-      }
-
-      let json;
+  useEffect(() => {
+    async function loadPosts() {
       try {
-        json = JSON.parse(text);
+        setLoading(true);
+        setError("");
+
+        const res = await fetch("/api/admin/posts", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        console.log("API Response status:", res.status);
+
+        const text = await res.text();
+        console.log("Raw API Response:", text);
+
+        if (!res.ok) {
+          throw new Error(`الـ API رجّع status ${res.status}`);
+        }
+
+        let json;
+        try {
+          json = JSON.parse(text);
+        } catch (err) {
+          throw new Error("فشل في قراءة JSON من السيرفر");
+        }
+
+        const data = Array.isArray(json) ? json : json.posts || [];
+        setPosts(data);
       } catch (err) {
-        throw new Error("فشل في قراءة JSON من السيرفر");
+        console.error("ADMIN_POSTS_LOAD_ERR:", err);
+        setError(err.message || "خطأ غير معروف");
+      } finally {
+        setLoading(false);
       }
-
-      const data = Array.isArray(json) ? json : json.posts || [];
-      setPosts(data);
-
-    } catch (err) {
-      console.error("ADMIN_POSTS_LOAD_ERR:", err);
-      setError(err.message || "خطأ غير معروف");
-    } finally {
-      setLoading(false);
     }
-  }
 
-  loadPosts();
-}, []);
+    loadPosts();
+  }, []);
+
+ async function handleDelete(post) {
+  toast(
+    (t) => (
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-semibold text-[#171717]">
+          حذف المقال
+        </p>
+        <p className="text-xs text-[#5F6F61]">
+          هل أنت متأكد من حذف:
+          <br />
+          <span className="font-medium">{post.title || post.slug}</span>
+        </p>
+
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+
+              try {
+                const res = await fetch(`/api/admin/posts/${post._id}`, {
+                  method: "DELETE",
+                  credentials: "include",
+                });
+
+                const data = await res.json().catch(() => ({}));
+
+                if (!res.ok) {
+                  throw new Error(data?.error || "فشل حذف المقال");
+                }
+
+                // ✅ تحديث اللست
+                setPosts((prev) =>
+                  prev.filter((p) => p._id !== post._id)
+                );
+
+                toast.success("تم حذف المقال بنجاح");
+              } catch (err) {
+                toast.error(
+                  err.message || "حدث خطأ أثناء حذف المقال"
+                );
+              }
+            }}
+            className="cursor-pointer px-3 py-1 rounded-lg bg-red-600 text-white text-xs hover:bg-red-700 transition"
+          >
+            حذف
+          </button>
+
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="cursor-pointer px-3 py-1 rounded-lg bg-[#E2E9CF] text-[#171717] text-xs hover:bg-[#d6ddc0] transition"
+          >
+            إلغاء
+          </button>
+        </div>
+      </div>
+    ),
+    {
+      duration: 6000,
+    }
+  );
+}
 
 
   const filteredPosts = posts.filter((post) => {
@@ -132,31 +187,21 @@ export default function AdminPostsPage() {
         </div>
 
         {/* حالة التحميل أو الخطأ */}
-        {loading && (
-          <p className="text-sm text-[#778873]">
-            جاري تحميل المقالات...
-          </p>
-        )}
-        {error && !loading && (
-          <p className="text-sm text-red-700">
-            {error}
-          </p>
-        )}
+        {loading && <p className="text-sm text-[#778873]">جاري تحميل المقالات...</p>}
+        {error && !loading && <p className="text-sm text-red-700">{error}</p>}
       </section>
 
       {/* جدول المقالات */}
       <section className="bg-white border border-[#D2DCB6] rounded-2xl shadow-sm p-3 md:p-4">
-        {/* لو مفيش داتا بعد الفلترة */}
         {!loading && !filteredPosts.length && (
           <p className="text-sm text-[#778873]">
             لا توجد مقالات مطابقة لبحثك/الفلتر الحالي.
           </p>
         )}
 
-        {/* جدول على الشاشات الكبيرة + كروت على الموبايل */}
         {!!filteredPosts.length && (
           <>
-            {/* جدول للديسكتوب / التابلت */}
+            {/* جدول للديسكتوب */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm border-separate border-spacing-y-2">
                 <thead>
@@ -169,6 +214,7 @@ export default function AdminPostsPage() {
                     <th className="text-right">إجراءات</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {filteredPosts.map((post) => (
                     <tr
@@ -200,19 +246,18 @@ export default function AdminPostsPage() {
                       </td>
 
                       <td className="px-2 py-2 text-xs text-[#171717]">
-                        {post.createdAt
-                          ? String(post.createdAt).slice(0, 10)
-                          : PLACEHOLDER}
+                        {post.createdAt ? String(post.createdAt).slice(0, 10) : PLACEHOLDER}
                       </td>
 
                       <td className="px-2 py-2 rounded-l-xl">
                         <div className="flex flex-wrap gap-2">
-                         <Link
+                          <Link
                             href={`/admin/posts/${post._id}`}
                             className="text-xs px-2 py-1 rounded-lg bg-[#A1BC98] text-white hover:bg-[#8ea683] transition"
-                            >
+                          >
                             تعديل
-                            </Link>
+                          </Link>
+
                           <Link
                             href={`/articles/${post.slug || post._id}`}
                             className="text-xs px-2 py-1 rounded-lg bg-white border border-[#D2DCB6] text-[#5F6F61] hover:bg-[#F1F3E0] transition"
@@ -220,6 +265,17 @@ export default function AdminPostsPage() {
                           >
                             عرض
                           </Link>
+
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(post)}
+                            className="cursor-pointer text-xs px-2 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700 transition inline-flex items-center gap-1"
+                            title="حذف"
+                            aria-label="حذف"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            حذف
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -258,11 +314,7 @@ export default function AdminPostsPage() {
                   </div>
 
                   <div className="flex items-center justify-between text-[11px] text-[#778873]">
-                    <span>
-                      {post.createdAt
-                        ? String(post.createdAt).slice(0, 10)
-                        : PLACEHOLDER}
-                    </span>
+                    <span>{post.createdAt ? String(post.createdAt).slice(0, 10) : PLACEHOLDER}</span>
 
                     <div className="flex gap-2">
                       <Link
@@ -271,6 +323,7 @@ export default function AdminPostsPage() {
                       >
                         تعديل
                       </Link>
+
                       <Link
                         href={`/articles/${post.slug || post._id}`}
                         className="text-[11px] px-2 py-1 rounded-lg bg-white border border-[#D2DCB6] text-[#5F6F61] hover:bg-[#F1F3E0] transition"
@@ -278,6 +331,17 @@ export default function AdminPostsPage() {
                       >
                         عرض
                       </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(post)}
+                        className="text-[11px] px-2 py-1 rounded-lg bg-red-600 text-white hover:bg-red-700 transition inline-flex items-center gap-1"
+                        title="حذف"
+                        aria-label="حذف"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        حذف
+                      </button>
                     </div>
                   </div>
                 </article>

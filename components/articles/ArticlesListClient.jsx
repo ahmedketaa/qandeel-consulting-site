@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 // دالة بسيطة لتطبيع النص (للتحسين بس، مش معالجة لغوية كاملة)
 function normalizeArabic(text) {
@@ -239,9 +240,7 @@ function AuthorBadge() {
       href="/author/youseff-qandeel"
       className="flex items-center gap-2 flex-row-reverse"
     >
-      <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white text-xs font-semibold shadow-sm">
-        يو
-      </div>
+     
       <div className="text-right">
         <p className="text-xs font-semibold text-[var(--color-dark)]">
           يوسف قنديل
@@ -250,6 +249,15 @@ function AuthorBadge() {
           كاتب المقالات القانونية
         </p>
       </div>
+       <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#D2DCB6]">
+                      <Image
+                        src="/images/yousef.jpeg" // عدّل المسار حسب مكان الصورة
+                        alt="يوسف قنديل - كاتب المقال"
+                        fill
+                        className="object-cover"
+                        sizes="32px"
+                      />
+                    </div>
     </Link>
   );
 }

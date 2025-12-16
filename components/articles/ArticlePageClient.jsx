@@ -13,6 +13,7 @@ import {
   CalendarDays,
   Share2,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function ArticlePageClient({ article, canonicalUrl }) {
   const [copied, setCopied] = useState(false);
@@ -119,9 +120,16 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
           {/* الصف الأول: كاتب + تاريخ + وقت قراءة + مشاهدات */}
           <div className="flex flex-wrap items-center gap-3 justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[#A1BC98] text-white flex items-center justify-center text-xs font-bold">
-                يو
+              <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#D2DCB6]">
+                <Image
+                  src="/images/yousef.jpeg" // عدّل المسار حسب مكان الصورة
+                  alt="يوسف قنديل - كاتب المقال"
+                  fill
+                  className="object-cover"
+                  sizes="32px"
+                />
               </div>
+
               <div className="text-[11px] md:text-xs">
                 <p className="font-semibold text-[#171717]">يوسف قنديل</p>
                 <Link
@@ -206,9 +214,15 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
         {/* كارت عن الكاتب (سايدبار) */}
         <aside className="bg-white rounded-2xl border border-[#D2DCB6] shadow-sm p-4 flex flex-col gap-2">
           <div className="flex items-center gap-3 mb-1">
-            <div className="w-10 h-10 rounded-full bg-[#A1BC98] text-white flex items-center justify-center text-sm font-bold">
-              يو
-            </div>
+            <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#D2DCB6]">
+                <Image
+                  src="/images/yousef.jpeg" // عدّل المسار حسب مكان الصورة
+                  alt="يوسف قنديل - كاتب المقال"
+                  fill
+                  className="object-cover"
+                  sizes="32px"
+                />
+              </div>
             <div>
               <p className="text-xs font-semibold text-[#171717]">
                 يوسف قنديل
