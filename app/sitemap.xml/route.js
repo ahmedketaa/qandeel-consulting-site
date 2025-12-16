@@ -1,4 +1,4 @@
-export default function sitemap() {
+export async function GET() {
   const baseUrl = "https://qandeil.com";
 
   const staticPages = [
@@ -48,8 +48,24 @@ export default function sitemap() {
     ...services,
   ];
 
-  return allPages.map((path) => ({
-    url: `${baseUrl}${path}`,
-    lastModified: new Date(),
-  }));
+  const urlsXml = allPages
+    .map(
+      (path) => `
+  <url>
+    <loc>${baseUrl}${path}</loc>
+  </url>`
+    )
+    .join("");
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlsXml}
+</urlset>`;
+
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+    },
+  });
 }
