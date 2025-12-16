@@ -1,40 +1,55 @@
-export async function GET() {
-  const baseUrl = "https://qandeil.com"; 
+export default function sitemap() {
+  const baseUrl = "https://qandeil.com";
 
-  const pages = [
-    "/", 
+  const staticPages = [
+    "",
     "/about",
     "/contact",
     "/articles",
     "/location",
-
-    // Services main pages
-    "/government-services",
-    "/licenses",
-    "/services",
     "/legal-consulting",
     "/elrwasy",
   ];
 
-  const urls = pages
-    .map(
-      (page) => `
-      <url>
-        <loc>${baseUrl}${page}</loc>
-      </url>
-    `
-    )
-    .join("");
+  const governmentServices = [
+    "/government-services",
+    "/government-services/abu-dhabi-chamber",
+    "/government-services/abu-dhabi-judicial-department",
+    "/government-services/civil-defense",
+    "/government-services/economic-development",
+    "/government-services/foreign-affairs",
+    "/government-services/human-resources",
+    "/government-services/identity-citizenship",
+    "/government-services/municipalities-transport",
+    "/government-services/notary-services",
+    "/government-services/traffic-licensing",
+  ];
 
-  return new Response(
-    `<?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      ${urls}
-    </urlset>`,
-    {
-      headers: {
-        "Content-Type": "application/xml",
-      },
-    }
-  );
+  const licenses = [
+    "/licenses",
+    "/licenses/abu-dhabi-trader",
+    "/licenses/commercial",
+    "/licenses/creative",
+    "/licenses/freelance",
+  ];
+
+  const services = [
+    "/services",
+    "/services/advertising-marketing",
+    "/services/content-creation",
+    "/services/graphic-design-branding",
+    "/services/social-media-management",
+  ];
+
+  const allPages = [
+    ...staticPages,
+    ...governmentServices,
+    ...licenses,
+    ...services,
+  ];
+
+  return allPages.map((path) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: new Date(),
+  }));
 }
