@@ -16,6 +16,15 @@ export const metadata = {
     canonical: "/",
   },
 
+  // ✅ favicon / app icons
+  icons: {
+    icon: [
+      { url: "/favicon.png", type: "image/png" }, // default
+    ],
+    shortcut: ["/favicon.png"],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+
   openGraph: {
     type: "website",
     locale: "ar_AE",
@@ -26,7 +35,7 @@ export const metadata = {
       "مكتب متخصص في تقديم الخدمات والاستشارات القانونية، صياغة العقود، وتخليص المعاملات الحكومية داخل الإمارات.",
     images: [
       {
-        url: "/images/og-default.jpeg", // حط صورة OG عامة (1200x630)
+        url: "/images/legal-identity.png",
         width: 1200,
         height: 630,
         alt: "يوسف قنديل للاستشارات القانونية",
@@ -57,9 +66,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ar" dir="rtl">
-      <body className="bg-light text-dark font-cairo">
-        {children}
-      </body>
+      <body className="bg-light text-dark font-cairo">{children}</body>
     </html>
   );
 }
