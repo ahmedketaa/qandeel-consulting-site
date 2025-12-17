@@ -30,30 +30,32 @@ export async function POST(req) {
       message,
     });
 
-    // إرسال إيميل (اختياري)
-    if (RESEND_API_KEY && CONTACT_RECEIVER_EMAIL) {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: "Qandeel Website <rightslegal22@gmail.com>",
-          to: [CONTACT_RECEIVER_EMAIL],
-          subject: `طلب تواصل جديد من ${name}`,
-          html: `
-            <h3>طلب تواصل جديد من الموقع</h3>
-            <p><strong>الاسم:</strong> ${name}</p>
-            <p><strong>الإيميل:</strong> ${email || "-"}</p>
-            <p><strong>الهاتف:</strong> ${phone || "-"}</p>
-            <p><strong>الخدمة:</strong> ${service || "-"}</p>
-            <p><strong>الرسالة:</strong></p>
-            <p>${message}</p>
-          `,
-        }),
-      });
-    }
+    // إرسال إيميل
+if (RESEND_API_KEY) {
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+    },
+    body: JSON.stringify({
+      from: "Qandeil Center <no-reply@qandeil.com>", // ✅ من الدومين
+      to: ["rightslegal22@gmail.com"], // ✅ الاستقبال Gmail عادي
+      reply_to: email || "info@qandeil.com", // (اختياري بس مهم)
+      subject: `طلب تواصل جديد من ${name}`,
+      html: `
+        <h3>طلب تواصل جديد من الموقع</h3>
+        <p><strong>الاسم:</strong> ${name}</p>
+        <p><strong>الإيميل:</strong> ${email || "-"}</p>
+        <p><strong>الهاتف:</strong> ${phone || "-"}</p>
+        <p><strong>الخدمة:</strong> ${service || "-"}</p>
+        <p><strong>الرسالة:</strong></p>
+        <p>${message}</p>
+      `,
+    }),
+  });
+}
+
 
     return NextResponse.json({ success: true });
   } catch (err) {
