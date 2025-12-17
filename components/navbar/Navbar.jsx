@@ -12,6 +12,7 @@ import {
   Home,
 } from "lucide-react";
 import ContactModal from "../contact-modal/ContactModal";
+import Image from "next/image";
 
 // Simple colored circular icon for social buttons
 function SocialCircle({ bg, children, size = 26 }) {
@@ -338,15 +339,32 @@ export default function Navbar() {
           dir="rtl"
         >
           {/* Right side: home icon */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center rounded-full bg-dark text-light border border-light/40 hover:bg-primary hover:text-white transition w-8 h-8"
-              aria-label="الرئيسية"
-            >
-              <Home size={16} />
-            </Link>
-          </div>
+          {/* Right side: logo + home */}
+<div className="flex items-center gap-3">
+  {/* Logo */}
+  <Link href="/" className="flex items-center gap-2">
+    <div className="relative mt-2 w-[100px] h-[36px] md:w-[140px] md:h-[44px]">
+      <Image
+        src="/images/lo.png"
+        alt="مركز قنديل للاستشارات القانونية"
+        width={150}
+        height={10}
+        className="object-contain"
+        priority
+      />
+    </div>
+  </Link>
+
+  {/* Home icon */}
+  <Link
+    href="/"
+    className="inline-flex items-center justify-center rounded-full bg-dark text-light border border-light/40 hover:bg-primary hover:text-white transition w-8 h-8"
+    aria-label="الرئيسية"
+  >
+    <Home size={16} />
+  </Link>
+</div>
+
 
           {/* Desktop menu */}
           <ul className="hidden md:flex items-center justify-center gap-4 lg:gap-6 text-[13px] md:text-[14px] font-semibold">

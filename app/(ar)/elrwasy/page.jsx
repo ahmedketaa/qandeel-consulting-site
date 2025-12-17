@@ -107,6 +107,31 @@ export default function AlRawasiServicesPage() {
               خدمات الرواسي للطباعة
             </span>
           </nav>
+          <a
+            href="/brochures/el_rwasy_services.pdf"
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-primary text-dark font-semibold px-6 py-3 rounded-full shadow hover:bg-[#90aa86] transition"
+          >
+            📄 تحميل ملف خدمات الرواسي (PDF)
+          </a>
+        <details className="w-full border rounded-xl overflow-hidden bg-white">
+          {/* العنوان اللي بيتضغط عليه */}
+          <summary className="cursor-pointer select-none px-5 py-4 font-semibold text-dark bg-[#F1F3E0] hover:bg-[#E4EDD2] transition flex items-center justify-between">
+            <span>📄 عرض ملف خدمات الرواسي (PDF)</span>
+            <span className="text-sm text-[#5F6F61]">اضغط للعرض</span>
+          </summary>
+
+          {/* المحتوى اللي بيتفتح */}
+          <div className="w-full h-[600px] border-t">
+            <iframe
+              src="/brochures/el_rwasy_services.pdf"
+              className="w-full h-full"
+            />
+          </div>
+        </details>
+
 
           {/* Intro */}
           <section className="bg-white rounded-2xl shadow-md p-6 md:p-8 leading-relaxed">
