@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 const ContactSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },   // اسم العميل
-    email: { type: String, required: true },  // إيميله
+    email: { type: String, required: false, default: "" },
+
     phone: String,                            // رقم الهاتف (اختياري)
     service: String,                          // الخدمة اللي اختارها أو جاي منها
     message: { type: String, required: true } // نص الرسالة

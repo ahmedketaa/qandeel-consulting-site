@@ -31,30 +31,49 @@ export async function POST(req) {
     });
 
     // إرسال إيميل
+// إرسال إيميل
 if (RESEND_API_KEY) {
-  await fetch("https://api.resend.com/emails", {
+  const payload = {
+    from: "Qandeil Center <no-reply@qandeil.com>",
+    to: ["rightslegal22@gmail.com"],
+    subject: `طلب تواصل جديد من ${name}`,
+    html: `
+      <h3>طلب تواصل جديد من الموقع</h3>
+      <p><strong>الاسم:</strong> ${name}</p>
+      <p><strong>الإيميل:</strong> ${email || "-"}</p>
+      <p><strong>الهاتف:</strong> ${phone || "-"}</p>
+      <p><strong>الخدمة:</strong> ${service || "-"}</p>
+      <p><strong>الرسالة:</strong></p>
+      <p>${String(message).replace(/\n/g, "<br/>")}</p>
+    `,
+  };
+
+  // ✅ Reply-To اختياري: يتبعت فقط لو الإيميل موجود وصحيح
+  const emailStr = String(email || "").trim();
+  const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
+  if (validEmail) payload.reply_to = emailStr;
+
+  const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
-    body: JSON.stringify({
-      from: "Qandeil Center <no-reply@qandeil.com>", // ✅ من الدومين
-      to: ["rightslegal22@gmail.com"], // ✅ الاستقبال Gmail عادي
-      reply_to: email || "info@qandeil.com", // (اختياري بس مهم)
-      subject: `طلب تواصل جديد من ${name}`,
-      html: `
-        <h3>طلب تواصل جديد من الموقع</h3>
-        <p><strong>الاسم:</strong> ${name}</p>
-        <p><strong>الإيميل:</strong> ${email || "-"}</p>
-        <p><strong>الهاتف:</strong> ${phone || "-"}</p>
-        <p><strong>الخدمة:</strong> ${service || "-"}</p>
-        <p><strong>الرسالة:</strong></p>
-        <p>${message}</p>
-      `,
-    }),
+    body: JSON.stringify(payload),
   });
+
+  const data = await res.json().catch(() => ({}));
+
+  // ✅ لو فشل، نطلع السبب الحقيقي
+  if (!res.ok) {
+    console.error("RESEND_ERROR", res.status, data);
+    return NextResponse.json(
+      { error: "فشل إرسال الإيميل", details: data },
+      { status: 500 }
+    );
+  }
 }
+
 
 
     return NextResponse.json({ success: true });

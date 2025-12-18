@@ -420,7 +420,7 @@ export default function Navbar() {
           {/* Mobile controls */}
           <div className="md:hidden flex-1 flex items-center justify-end gap-3">
             <a
-              href="#contact"
+               href="https://wa.me/00971556631971"
               className="bg-primary text-white text-xs px-3 py-1.5 rounded-lg hover:bg-primary/90 transition"
             >
               احجز استشارة
@@ -490,7 +490,7 @@ export default function Navbar() {
             </ul>
 
             <a
-              href="#contact"
+              href="https://wa.me/00971556631971"
               className="block bg-primary text-white text-center py-2 rounded-lg font-semibold mt-1 text-sm hover:bg-primary/90 transition"
             >
               احجز استشارة

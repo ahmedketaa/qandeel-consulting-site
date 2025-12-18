@@ -16,13 +16,13 @@ export const metadata = {
     canonical: "/",
   },
 
-  // ✅ favicon / app icons
+  // ✅ Favicon (الأساسي)
   icons: {
     icon: [
-      { url: "/favicon.png", type: "image/png" }, // default
+      { url: "/favicon.ico" }, // الأهم لجوجل
+      { url: "/favicon.png", type: "image/png" },
     ],
-    shortcut: ["/favicon.png"],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/favicon.ico"],
   },
 
   openGraph: {
@@ -48,7 +48,7 @@ export const metadata = {
     title: "يوسف قنديل للاستشارات القانونية",
     description:
       "استشارات قانونية وخدمات متكاملة للأفراد والشركات داخل دولة الإمارات.",
-    images: ["/images/og-default.jpg"],
+    images: ["/images/legal-identity.png"],
   },
 
   robots: {
@@ -66,7 +66,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ar" dir="rtl">
-      <body className="bg-light text-dark font-cairo">{children}</body>
+      <body className="bg-light text-dark font-cairo">
+        {children}
+      </body>
     </html>
   );
 }

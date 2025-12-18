@@ -29,7 +29,7 @@ const slides = [
 },
 
   {
-    image: "/images/slide3.jpg",
+    image: "/images/services1.jpg",
     kicker: "رؤية طويلة المدى",
     title: "نصنع لك استراتيجية تُحدث فرقًا واضحًا",
     subtitle:
