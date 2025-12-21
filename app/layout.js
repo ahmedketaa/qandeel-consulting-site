@@ -37,7 +37,7 @@ export const metadata = {
     images: [
       {
         // ✅ URL كامل
-        url: "https://qandeil.com/images/legal-identity-og.png",
+        url: "https://qandeil.com/images/legal-identity.png",
         width: 1200,
         height: 630,
         alt: "يوسف قنديل للاستشارات القانونية",
@@ -93,7 +93,7 @@ export default function RootLayout({ children }) {
         {/* ✅ أهم تاج لواتساب/ميتا */}
         <meta
           property="og:image"
-          content="https://qandeil.com/images/legal-identity-og.png"
+          content="https://qandeil.com/images/legal-identity.png"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -104,7 +104,7 @@ export default function RootLayout({ children }) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:image"
-          content="https://qandeil.com/images/legal-identity-og.png"
+          content="https://qandeil.com/images/legal-identity.png"
         />
       </head>
 
