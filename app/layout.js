@@ -26,22 +26,23 @@ export const metadata = {
   },
 
   openGraph: {
-    type: "website",
-    locale: "ar_AE",
-    url: "https://qandeil.com",
-    siteName: "يوسف قنديل للاستشارات القانونية",
-    title: "يوسف قنديل للاستشارات القانونية",
-    description:
-      "مكتب متخصص في تقديم الخدمات والاستشارات القانونية، صياغة العقود، وتخليص المعاملات الحكومية داخل الإمارات.",
-    images: [
-      {
-        url: "/images/legal-identity.png",
-        width: 1200,
-        height: 630,
-        alt: "يوسف قنديل للاستشارات القانونية",
-      },
-    ],
-  },
+  type: "website",
+  locale: "ar_AE",
+  url: "https://qandeil.com",
+  siteName: "يوسف قنديل للاستشارات القانونية",
+  title: "يوسف قنديل للاستشارات القانونية",
+  description:
+    "مكتب متخصص في تقديم الخدمات والاستشارات القانونية، صياغة العقود، وتخليص المعاملات الحكومية داخل الإمارات.",
+  images: [
+    {
+      url: "https://qandeil.com/images/legal-identity.png",
+      width: 1200,
+      height: 630,
+      alt: "يوسف قنديل للاستشارات القانونية",
+    },
+  ],
+},
+
 
   twitter: {
     card: "summary_large_image",
@@ -66,9 +67,21 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ar" dir="rtl">
+      <head>
+        {/* Favicon – صريح لجوجل */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.png" sizes="32x32" type="image/png" />
+        <link rel="icon" href="/favicon.png" sizes="16x16" type="image/png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        {/* مهم جدًا */}
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </head>
+
       <body className="bg-light text-dark font-cairo">
         {children}
       </body>
     </html>
   );
 }
+
