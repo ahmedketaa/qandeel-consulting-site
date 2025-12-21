@@ -23,33 +23,35 @@ export const metadata = {
       { url: "/favicon.png", type: "image/png" },
     ],
     shortcut: ["/favicon.ico"],
+    apple: [{ url: "/apple-touch-icon.png" }],
   },
 
   openGraph: {
-  type: "website",
-  locale: "ar_AE",
-  url: "https://qandeil.com",
-  siteName: "يوسف قنديل للاستشارات القانونية",
-  title: "يوسف قنديل للاستشارات القانونية",
-  description:
-    "مكتب متخصص في تقديم الخدمات والاستشارات القانونية، صياغة العقود، وتخليص المعاملات الحكومية داخل الإمارات.",
-  images: [
-    {
-      url: "https://qandeil.com/images/legal-identity.png",
-      width: 1200,
-      height: 630,
-      alt: "يوسف قنديل للاستشارات القانونية",
-    },
-  ],
-},
-
+    type: "website",
+    locale: "ar_AE",
+    url: "https://qandeil.com/",
+    siteName: "يوسف قنديل للاستشارات القانونية",
+    title: "يوسف قنديل للاستشارات القانونية",
+    description:
+      "مكتب متخصص في تقديم الخدمات والاستشارات القانونية، صياغة العقود، وتخليص المعاملات الحكومية داخل الإمارات.",
+    images: [
+      {
+        // ✅ URL كامل
+        url: "https://qandeil.com/images/legal-identity-og.png",
+        width: 1200,
+        height: 630,
+        alt: "يوسف قنديل للاستشارات القانونية",
+      },
+    ],
+  },
 
   twitter: {
     card: "summary_large_image",
     title: "يوسف قنديل للاستشارات القانونية",
     description:
       "استشارات قانونية وخدمات متكاملة للأفراد والشركات داخل دولة الإمارات.",
-    images: ["/images/legal-identity.png"],
+    // ✅ URL كامل (عشان البوتس ما تتلخبطش)
+    images: ["https://qandeil.com/images/legal-identity-og.png"],
   },
 
   robots: {
@@ -68,20 +70,45 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ar" dir="rtl">
       <head>
-        {/* Favicon – صريح لجوجل */}
+        {/* ===================== FAVICON (Explicit) ===================== */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon.png" sizes="32x32" type="image/png" />
-        <link rel="icon" href="/favicon.png" sizes="16x16" type="image/png" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="16x16" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-        {/* مهم جدًا */}
         <link rel="shortcut icon" href="/favicon.ico" />
+
+        {/* ===================== OG (Explicit for Meta/WhatsApp) ===================== */}
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:site_name"
+          content="يوسف قنديل للاستشارات القانونية"
+        />
+        <meta property="og:title" content="يوسف قنديل للاستشارات القانونية" />
+        <meta
+          property="og:description"
+          content="مكتب متخصص في تقديم الخدمات والاستشارات القانونية، صياغة العقود، وتخليص المعاملات الحكومية داخل الإمارات."
+        />
+        <meta property="og:url" content="https://qandeil.com/" />
+
+        {/* ✅ أهم تاج لواتساب/ميتا */}
+        <meta
+          property="og:image"
+          content="https://qandeil.com/images/legal-identity-og.png"
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        {/* اختياري لكن مفيد */}
+        <meta property="og:image:alt" content="يوسف قنديل للاستشارات القانونية" />
+
+        {/* ===================== Twitter (Explicit) ===================== */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:image"
+          content="https://qandeil.com/images/legal-identity-og.png"
+        />
       </head>
 
-      <body className="bg-light text-dark font-cairo">
-        {children}
-      </body>
+      <body className="bg-light text-dark font-cairo">{children}</body>
     </html>
   );
 }
-
