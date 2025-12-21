@@ -310,7 +310,7 @@ export default function Navbar() {
                 <InstagramCircle />
               </a>
               <a
-                href="#"
+                href="https://www.tiktok.com/@youssefkandil22?_r=1&_t=ZS-92PRSWGwdiW"
                 className="hover:opacity-90 transition"
                 aria-label="TikTok"
                 target="_blank"
@@ -319,7 +319,7 @@ export default function Navbar() {
                 <TikTokIcon />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/in/%D9%8A%D9%88%D8%B3%D9%81-%D9%82%D9%86%D8%AF%D9%8A%D9%84-b10848279/"
                 className="hover:opacity-90 transition"
                 aria-label="LinkedIn"
                 target="_blank"

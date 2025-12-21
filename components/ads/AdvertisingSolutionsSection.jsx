@@ -11,7 +11,7 @@ const advertisingServices = [
       "إدارة صفحات منصات التواصل الاجتماعي وبناء حضور مهني متناسق يعبر عن هويتك.",
     image: "/images/social-accounts-management.jpg",
     imageAlt: "Social media accounts management dashboard on laptop and mobile.",
-    slug: "/services/advertising/accounts",
+    slug: "/services/social-media-management",
   },
   {
     id: 2,
@@ -20,7 +20,7 @@ const advertisingServices = [
       "ابتكار محتوى جذاب يزيد التفاعل مع علامتك التجارية ويقوي علاقتك مع الجمهور.",
     image: "/images/content-creation.jpg",
     imageAlt: "Person creating interactive content with social media reactions around.",
-    slug: "/services/advertising/content-creation",
+    slug: "/services/content-creation",
   },
   {
     id: 3,
@@ -29,7 +29,7 @@ const advertisingServices = [
       "حملات إعلانية رقمية مدروسة تستهدف جمهورك بدقة وتحقق أفضل عائد استثماري.",
     image: "/images/ads.jpg",
     imageAlt: "Analytics dashboard for digital advertising campaigns and conversions.",
-    slug: "/services/advertising/digital-ads",
+    slug: "/services/advertising-marketing",
   },
 ];
 
