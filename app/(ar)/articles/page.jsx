@@ -31,35 +31,45 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "المقالات القانونية | مركز قنديل للاستشارات",
-    description:
-      "مكتبة مقالات قانونية مبسطة تساعدك على فهم الإجراءات في الإمارات.",
+    description: "مكتبة مقالات قانونية مبسطة تساعدك على فهم الإجراءات في الإمارات.",
   },
 };
 
-// 🟢 جلب المقالات فعليًا من قاعدة البيانات
+// ✅ جلب المقالات من DB (منشور فقط + ترتيب بالأحدث نشرًا)
 async function getArticlesFromDB() {
   await connectDB();
 
   const posts = await Post.find({ status: "published" })
-    .sort({ createdAt: -1 })
-    .select("title slug excerpt category tags views createdAt content readTimeMinutes");
+    // ✅ الأحدث نشرًا أولاً، ولو publishedAt فاضي يرجع للـ createdAt
+    .sort({ publishedAt: -1, createdAt: -1 })
+    // ✅ لازم نجيب publishedAt فعليًا
+    .select(
+      "title slug excerpt category tags views publishedAt createdAt content readTimeMinutes"
+    )
+    .lean();
 
   return posts.map((post) => {
     const content = post.content || "";
+
     const approxReadTime =
       post.readTimeMinutes ||
       Math.max(1, Math.round((content.split(/\s+/).length || 200) / 200));
 
+    // ✅ تاريخ النشر الحقيقي (fallback للـ createdAt)
+    const dateObj = post.publishedAt || post.createdAt || null;
+
     return {
-      id: post._id.toString(),
+      id: String(post._id),
       title: post.title,
       slug: post.slug,
       excerpt:
         post.excerpt ||
-        (content ? content.slice(0, 180) + (content.length > 180 ? "..." : "") : ""),
+        (content
+          ? content.slice(0, 180) + (content.length > 180 ? "..." : "")
+          : ""),
       category: post.category || "عام",
       tags: Array.isArray(post.tags) ? post.tags : [],
-      publishedAt: post.createdAt ? post.createdAt.toISOString().slice(0, 10) : null,
+      publishedAt: dateObj ? new Date(dateObj).toISOString().slice(0, 10) : null,
       readTimeMinutes: approxReadTime,
       viewCount: post.views ?? 0,
     };
@@ -103,7 +113,6 @@ export default async function ArticlesPage() {
     ],
   };
 
-  // ItemList لأول 10 مقالات فقط (خفيف + مفيد)
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -149,7 +158,6 @@ export default async function ArticlesPage() {
             </p>
           </header>
 
-          {/* الجزء التفاعلي: بحث + قائمة مقالات + الأكثر قراءة */}
           <ArticlesListClient articles={articles} />
         </section>
       </main>
