@@ -14,6 +14,10 @@ import {
   Share2,
 } from "lucide-react";
 import Image from "next/image";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+const WHATSAPP_NUMBER = "971556631971"; // ✅ رقمك الأساسي
 
 export default function ArticlePageClient({ article, canonicalUrl }) {
   const [copied, setCopied] = useState(false);
@@ -27,7 +31,8 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
     readTimeMinutes,
     viewCount,
     sections = [],
-    coverImage, // ⬅️ أضفنا دي
+    coverImage,
+    content,
   } = article || {};
 
   const safeUrl =
@@ -72,10 +77,14 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
       : [
           {
             id: "main",
-            heading: title,
-            body: article?.content || "",
+            heading: null, // ✅ مهم: بلاش نكرر عنوان المقال كـ H2
+            body: content || "",
           },
         ];
+
+  const whatsappCtaLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    `مرحباً، أود الاستفسار أو حجز استشارة بخصوص: ${title || ""}\n${safeUrl}`
+  )}`;
 
   return (
     <article className="text-right">
@@ -105,8 +114,7 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
             <img
               src={coverImage}
               alt={title || "صورة غلاف المقال"}
-                      className="w-full max-h-[420px] md:max-h-[480px] object-fill rounded-xl"
-
+              className="w-full max-h-[420px] md:max-h-[480px] object-fill rounded-xl"
               loading="lazy"
             />
           </div>
@@ -122,7 +130,7 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
             <div className="flex items-center gap-2">
               <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#D2DCB6]">
                 <Image
-                  src="/images/yousef.jpeg" // عدّل المسار حسب مكان الصورة
+                  src="/images/yousef.jpeg"
                   alt="يوسف قنديل - كاتب المقال"
                   fill
                   className="object-cover"
@@ -215,18 +223,16 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
         <aside className="bg-white rounded-2xl border border-[#D2DCB6] shadow-sm p-4 flex flex-col gap-2">
           <div className="flex items-center gap-3 mb-1">
             <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[#D2DCB6]">
-                <Image
-                  src="/images/yousef.jpeg" // عدّل المسار حسب مكان الصورة
-                  alt="يوسف قنديل - كاتب المقال"
-                  fill
-                  className="object-cover"
-                  sizes="32px"
-                />
-              </div>
+              <Image
+                src="/images/yousef.jpeg"
+                alt="يوسف قنديل - كاتب المقال"
+                fill
+                className="object-cover"
+                sizes="32px"
+              />
+            </div>
             <div>
-              <p className="text-xs font-semibold text-[#171717]">
-                يوسف قنديل
-              </p>
+              <p className="text-xs font-semibold text-[#171717]">يوسف قنديل</p>
               <p className="text-[11px] text-[#778873]">
                 مستشار قانوني – مؤسس مركز قنديل للاستشارات
               </p>
@@ -243,14 +249,40 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
       <section className="bg-white rounded-2xl border border-[#D2DCB6] shadow-sm p-5 md:p-7 mb-8">
         {sectionsToRender.map((section) => (
           <div key={section.id} className="mb-6 last:mb-0">
-            {section.heading && (
+            {/* لو عندك سكاشن حقيقية بعناوين مختلفة، هنظهرها H2 */}
+            {section.heading && section.heading !== title && (
               <h2 className="text-lg md:text-xl font-semibold text-[#171717] mb-3">
                 {section.heading}
               </h2>
             )}
+
             {section.body && (
-              <div className="prose prose-sm md:prose-base max-w-none prose-p:mb-3 prose-ul:mb-3 prose-li:mb-1 prose-rtl prose-headings:font-semibold prose-headings:text-[#171717] text-[#171717] leading-relaxed whitespace-pre-line">
-                {section.body}
+              <div className="prose prose-sm md:prose-base max-w-none prose-rtl prose-headings:font-semibold prose-headings:text-[#171717] text-[#171717] leading-relaxed">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    h2: ({ children }) => (
+                      <h2 className="text-lg md:text-xl font-semibold text-[#171717] mt-6 mb-3">
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-base md:text-lg font-semibold text-[#171717] mt-4 mb-2">
+                        {children}
+                      </h3>
+                    ),
+                    p: ({ children }) => <p className="mb-3">{children}</p>,
+                    ul: ({ children }) => (
+                      <ul className="mb-3 list-disc pr-6">{children}</ul>
+                    ),
+                    ol: ({ children }) => (
+                      <ol className="mb-3 list-decimal pr-6">{children}</ol>
+                    ),
+                    li: ({ children }) => <li className="mb-1">{children}</li>,
+                  }}
+                >
+                  {section.body}
+                </ReactMarkdown>
               </div>
             )}
           </div>
@@ -283,9 +315,7 @@ export default function ArticlePageClient({ article, canonicalUrl }) {
         </div>
 
         <Link
-          href={`https://wa.me/00971556631974?text=${encodeURIComponent(
-            `مرحباً، أود الاستفسار أو حجز استشارة بخصوص: ${title}`
-          )}`}
+          href={whatsappCtaLink}
           target="_blank"
           className="inline-flex items-center justify-center px-5 py-2 rounded-full bg-[#5F6F61] text-white text-sm md:text-base font-semibold shadow hover:bg-[#46544a] transition"
         >

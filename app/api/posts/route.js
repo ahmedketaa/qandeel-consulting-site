@@ -1,82 +1,35 @@
-// app/api/admin/posts/route.js
+// app/api/posts/route.js  (PUBLIC)
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
-import { verifyJwt } from "@/lib/auth";
 
-function makeSlug(str) {
-  return str
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9\u0600-\u06FF\-]/g, "");
-}
-
-export async function POST(req) {
+export async function GET() {
   try {
     await connectDB();
 
-    const token = req.cookies.get("admin_token")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
-    }
+    const posts = await Post.find({ status: "published" })
+      .sort({ publishedAt: -1, createdAt: -1 })
+      .select("title slug excerpt category tags publishedAt views coverImage")
+      .lean();
 
-    const payload = await verifyJwt(token);
-    if (!payload) {
-      return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
-    }
+    const normalized = posts.map((p) => ({
+      id: String(p._id),
+      title: p.title,
+      slug: p.slug,
+      excerpt: p.excerpt || "",
+      category: p.category || "عام",
+      tags: Array.isArray(p.tags) ? p.tags : [],
+      publishedAt: p.publishedAt ? p.publishedAt.toISOString() : null,
+      readTimeMinutes: p.readTimeMinutes ?? 0,
+      viewCount: p.views ?? 0,
+      coverImage: p.coverImage || "",
+    }));
 
-    const body = await req.json();
-    const {
-      title,
-      slug,
-      content,
-      status,
-      excerpt,
-      coverImage, // ⬅️ هنا
-      category,
-      tags,
-    } = body;
-
-    if (!title || !content) {
-      return NextResponse.json(
-        { error: "العنوان والمحتوى مطلوبان" },
-        { status: 400 }
-      );
-    }
-
-    const baseSlug = slug?.trim() || makeSlug(title);
-    let finalSlug = baseSlug || makeSlug(Date.now().toString());
-    let counter = 1;
-
-    while (await Post.findOne({ slug: finalSlug })) {
-      finalSlug = `${baseSlug}-${counter++}`;
-    }
-
-    const newPost = await Post.create({
-      title,
-      slug: finalSlug,
-      content,
-      status: status === "published" ? "published" : "draft",
-      excerpt: excerpt || "",
-      category: category || "",
-      tags: Array.isArray(tags) ? tags : [],
-      views: 0,
-      coverImage: coverImage || "", // ⬅️ نخزّن رابط Cloudinary
-      publishedAt: status === "published" ? new Date() : null,
-    });
-
-    return NextResponse.json(
-      {
-        ok: true,
-        post: newPost,
-      },
-      { status: 201 }
-    );
+    return NextResponse.json({ ok: true, posts: normalized }, { status: 200 });
   } catch (err) {
-    console.error("CREATE_POST_ERROR", err);
+    console.error("GET_PUBLIC_POSTS_ERROR", err);
     return NextResponse.json(
-      { error: "حدث خطأ أثناء إنشاء المقال" },
+      { error: "حدث خطأ أثناء جلب المقالات" },
       { status: 500 }
     );
   }
