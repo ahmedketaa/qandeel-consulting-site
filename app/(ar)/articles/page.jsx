@@ -1,10 +1,12 @@
 // app/articles/page.jsx
 import Script from "next/script";
 import ArticlesListClient from "@/components/articles/ArticlesListClient";
-import { connectDB } from "@/lib/mongodb";
-import Post from "@/models/Post";
 
 const CANONICAL_URL = "https://qandeil.com/articles";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+// ✅ مهم: اجبر الصفحة تكون Dynamic (عشان ما تتكاشّش)
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "المقالات القانونية | مركز قنديل للاستشارات",
@@ -35,57 +37,21 @@ export const metadata = {
   },
 };
 
-// ✅ جلب المقالات من DB (منشور فقط + ترتيب بالأحدث نشرًا)
-async function getArticlesFromDB() {
-  await connectDB();
-
-  const posts = await Post.find({ status: "published" })
-    // ✅ الأحدث نشرًا أولاً، ولو publishedAt فاضي يرجع للـ createdAt
-    .sort({ publishedAt: -1, createdAt: -1 })
-    // ✅ لازم نجيب publishedAt فعليًا
-    .select(
-      "title slug excerpt category tags views publishedAt createdAt content readTimeMinutes"
-    )
-    .lean();
-
-  return posts.map((post) => {
-    const content = post.content || "";
-
-    const approxReadTime =
-      post.readTimeMinutes ||
-      Math.max(1, Math.round((content.split(/\s+/).length || 200) / 200));
-
-    // ✅ تاريخ النشر الحقيقي (fallback للـ createdAt)
-    const dateObj = post.publishedAt || post.createdAt || null;
-
-    return {
-      id: String(post._id),
-      title: post.title,
-      slug: post.slug,
-      excerpt:
-        post.excerpt ||
-        (content
-          ? content.slice(0, 180) + (content.length > 180 ? "..." : "")
-          : ""),
-      category: post.category || "عام",
-      tags: Array.isArray(post.tags) ? post.tags : [],
-      publishedAt: dateObj ? new Date(dateObj).toISOString().slice(0, 10) : null,
-      readTimeMinutes: approxReadTime,
-      viewCount: post.views ?? 0,
-    };
+async function getArticlesFromAPI() {
+  const res = await fetch(`${BASE_URL}/api/posts`, {
+    cache: "no-store", // ✅ دا اللي بيخلي المقال يظهر فورًا
   });
+
+  if (!res.ok) return [];
+
+  const data = await res.json().catch(() => ({}));
+  return Array.isArray(data?.posts) ? data.posts : [];
 }
 
 export default async function ArticlesPage() {
-  let articles = [];
+  const articles = await getArticlesFromAPI();
 
-  try {
-    articles = await getArticlesFromDB();
-  } catch (err) {
-    console.error("ARTICLES_PAGE_DB_ERROR", err);
-  }
-
-  // ===== JSON-LD (SEO) =====
+  // JSON-LD
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -106,11 +72,6 @@ export default async function ArticlesPage() {
       name: "مركز قنديل للاستشارات",
       url: "https://qandeil.com",
     },
-    about: [
-      { "@type": "Thing", name: "استشارات قانونية" },
-      { "@type": "Thing", name: "قوانين الإمارات" },
-      { "@type": "Thing", name: "إجراءات أبوظبي" },
-    ],
   };
 
   const itemListJsonLd = {
