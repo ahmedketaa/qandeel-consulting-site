@@ -1,5 +1,8 @@
 // app/layout.js
 import "./globals.css";
+import Script from "next/script";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata = {
   metadataBase: new URL("https://qandeil.com"),
@@ -18,10 +21,7 @@ export const metadata = {
 
   // ✅ Favicon (الأساسي)
   icons: {
-    icon: [
-      { url: "/favicon.ico" }, // الأهم لجوجل
-      { url: "/favicon.png", type: "image/png" },
-    ],
+    icon: [{ url: "/favicon.ico" }, { url: "/favicon.png", type: "image/png" }],
     shortcut: ["/favicon.ico"],
     apple: [{ url: "/apple-touch-icon.png" }],
   },
@@ -36,7 +36,6 @@ export const metadata = {
       "مكتب متخصص في تقديم الخدمات والاستشارات القانونية، صياغة العقود، وتخليص المعاملات الحكومية داخل الإمارات.",
     images: [
       {
-        // ✅ URL كامل
         url: "https://qandeil.com/images/legal-identity.png",
         width: 1200,
         height: 630,
@@ -50,7 +49,6 @@ export const metadata = {
     title: "يوسف قنديل للاستشارات القانونية",
     description:
       "استشارات قانونية وخدمات متكاملة للأفراد والشركات داخل دولة الإمارات.",
-    // ✅ URL كامل (عشان البوتس ما تتلخبطش)
     images: ["https://qandeil.com/images/legal-identity-og.png"],
   },
 
@@ -90,15 +88,16 @@ export default function RootLayout({ children }) {
         />
         <meta property="og:url" content="https://qandeil.com/" />
 
-        {/* ✅ أهم تاج لواتساب/ميتا */}
         <meta
           property="og:image"
           content="https://qandeil.com/images/legal-identity.png"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        {/* اختياري لكن مفيد */}
-        <meta property="og:image:alt" content="يوسف قنديل للاستشارات القانونية" />
+        <meta
+          property="og:image:alt"
+          content="يوسف قنديل للاستشارات القانونية"
+        />
 
         {/* ===================== Twitter (Explicit) ===================== */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -108,7 +107,27 @@ export default function RootLayout({ children }) {
         />
       </head>
 
-      <body className="bg-light text-dark font-cairo">{children}</body>
+      <body className="bg-light text-dark font-cairo">
+        {/* ✅ Google Analytics */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}');
+              `}
+            </Script>
+          </>
+        )}
+
+        {children}
+      </body>
     </html>
   );
 }
