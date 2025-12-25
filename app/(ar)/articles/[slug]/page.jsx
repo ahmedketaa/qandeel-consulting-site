@@ -4,7 +4,7 @@ import Script from "next/script"; // ✅ (إضافة SEO فقط)
 import ArticlePageClient from "@/components/articles/ArticlePageClient";
 import { notFound } from "next/navigation";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://qandeil.com";
 
 // 🟢 هيلبر: جلب مقال منشور بالـ slug من API /api/posts/[slug]
 async function getArticleBySlug(slugParam) {

@@ -3,7 +3,7 @@ import Script from "next/script";
 import ArticlesListClient from "@/components/articles/ArticlesListClient";
 
 const CANONICAL_URL = "https://qandeil.com/articles";
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://qandeil.com";
 
 // ✅ مهم: اجبر الصفحة تكون Dynamic (عشان ما تتكاشّش)
 export const dynamic = "force-dynamic";
