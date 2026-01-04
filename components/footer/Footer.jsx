@@ -200,6 +200,12 @@ export default function Footer() {
                   0556631971
                 </a>
               </p>
+               <p>
+                مكتبنا في مصر: <br />
+                <a href="tel:0556631971" className="hover:text-primary">
+                  00201223976665
+                </a>
+              </p>
 
               <p>
                 الإيميل: <br />
