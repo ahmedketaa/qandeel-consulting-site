@@ -10,6 +10,8 @@ import ServicesTabsSection from "@/components/services-tabs/ServicesTabsSection"
 import ServicesSection from "@/components/services/ServicesSection";
 import StartNowSection from "@/components/start-now/StartNowSection";
 import WhyChooseSection from "@/components/why-us/WhyChooseSection";
+import FaqSections from "@/components/faq/faq";
+import HomeFaqSection from "@/components/faq/HomeFaqSection";
 
 export const metadata = {
   title: "يوسف قنديل للاستشارات القانونية | محامٍ ومستشار قانوني في الإمارات",
@@ -84,7 +86,9 @@ export default function Home() {
         <AboutQandilSection />
         <ServicesTabsSection />
         <AdvertisingSolutionsSection />
+       
         <WhyChooseSection />
+         <HomeFaqSection />
         <StartNowSection />
         <LocationSection />
       </main>
