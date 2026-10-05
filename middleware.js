@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { verifyJwt } from "./lib/auth";
 
-const SITE_DISABLED = true; // ✅ true = إيقاف الموقع، false = تشغيله
+const SITE_DISABLED = false; // ✅ true = إيقاف الموقع، false = تشغيله
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
